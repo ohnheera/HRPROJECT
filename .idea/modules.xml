@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SnapshotAPI3.iml" filepath="$PROJECT_DIR$/SnapshotAPI3.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/naver-map-api/naver-map-api.iml" filepath="$PROJECT_DIR$/naver-map-api/naver-map-api.iml" />
     </modules>
   </component>
 </project>

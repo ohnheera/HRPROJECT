@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SnapshotAPI3</string>
+    <string name="str_done">Done</string>
 </resources>

@@ -58,5 +58,32 @@
         android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent" />
 
+    <Button
+        android:id="@+id/sensorbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensor Data"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="507dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/mapbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="507dp"
+        android:layout_marginLeft="160dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/MapContainer"
+        android:layout_alignParentEnd="true"></LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
 

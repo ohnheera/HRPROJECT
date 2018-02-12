@@ -2,6 +2,7 @@ package com.example.hyoryeong.snapshotapi3;
 
 import android.Manifest;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -12,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import java.util.List;
 import java.util.Timer;
@@ -40,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     TextView place;
     TextView weath;
     TextView headphone;
+    Button sensordata;
+    Button mapbutton;
+
     private static final String TAG = "Awareness";
     Timer timer;
     private GoogleApiClient client;
@@ -62,13 +68,13 @@ public class MainActivity extends AppCompatActivity {
         place = (TextView) findViewById(R.id.place);
         weath = (TextView) findViewById(R.id.weather);
         headphone = (TextView) findViewById(R.id.headphone);
+        sensordata=(Button) findViewById(R.id.sensorbutton);
+        mapbutton=(Button) findViewById(R.id.mapbutton);
 
         client = new GoogleApiClient.Builder(MainActivity.this)
                 .addApi(Awareness.API)
                 .build();
         client.connect();
-
-        //getSnapShot();
 
         timer=new Timer();
 
@@ -80,6 +86,22 @@ public class MainActivity extends AppCompatActivity {
         };
 
         timer.schedule(timertask,1000,1000);
+
+        sensordata.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SensorActivity.class));
+            }
+        });
+
+        mapbutton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, NMapViewer.class));
+            }
+        });
     }
 
     public void getSnapShot(){
