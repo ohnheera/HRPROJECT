@@ -3,6 +3,7 @@ package com.example.hyoryeong.snapshotapi3;
 /**
  * Created by Hyoryeong on 2018-02-12.
  */
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,7 @@ public class loginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.joinview);
+        setContentView(R.layout.loginview);
 
         final DBHelper dbHelper = new DBHelper(getApplicationContext(), "CLIENTINFO.db", null, 1);
         final String TAG = "User";
@@ -55,14 +56,21 @@ public class loginActivity extends AppCompatActivity {
         // 테이블에 있는 모든 데이터 출력
         final TextView result = (TextView) findViewById(R.id.result);
 
+        //회원가입 view
         final EditText etDate = (EditText) findViewById(R.id.date);
         final EditText etName = (EditText) findViewById(R.id.name);
         final EditText etAge = (EditText) findViewById(R.id.age);
         final CheckBox etMan = (CheckBox) findViewById(R.id.gender_man);
         final CheckBox etWoman = (CheckBox) findViewById(R.id.gender_woman);
+        final EditText etID=(EditText) findViewById(R.id.idinfo);
+        final EditText etPW=(EditText) findViewById(R.id.pwinfo);
+
+        //로그인 view
+        final EditText inputID=(EditText) findViewById(R.id.inputid);
+        final EditText inputPW=(EditText) findViewById(R.id.inputpw);
 
 
-        ////////////////////////////////// Firebase에 이것저것 올려보기 //////////////////////////////////////////////////////////////////
+        ////////////////////////////////// Firebase에 이것저것 올려봤는데 안되네.. //////////////////////////////////////////////////////////////////
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
 
@@ -110,6 +118,8 @@ public class loginActivity extends AppCompatActivity {
         });
         //////////////////////////////////////////////////끝..안됨../////////////////////////////////////////////////////
 
+
+        //성별 체크하기
         etMan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -205,6 +215,21 @@ public class loginActivity extends AppCompatActivity {
                 Log.e(TAG, dbHelper.getResult());
             }
         });
+
+        //DB에 가입되어 있나 확인.
+        Button login = (Button) findViewById(R.id.loginbutton);
+        login.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                String id= inputID.getText().toString();
+                String pw= inputPW.getText().toString();
+
+                startActivity(new Intent(loginActivity.this, MainActivity.class));
+
+            }
+        });
+
+
     }
 
 }

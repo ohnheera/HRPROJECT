@@ -75,7 +75,7 @@ public class NMapViewer extends NMapActivity {
     private NMapView mMapView;
     private NMapController mMapController;
 
-    private static final NGeoPoint NMAP_LOCATION_DEFAULT = new NGeoPoint(126.978371, 37.5666091);
+    private static final NGeoPoint NMAP_LOCATION_DEFAULT = new NGeoPoint(127.05969579999999, 37.6194965);
     private static final int NMAP_ZOOMLEVEL_DEFAULT = 11;
     private static final int NMAP_VIEW_MODE_DEFAULT = NMapView.VIEW_MODE_VECTOR;
     private static final boolean NMAP_TRAFFIC_MODE_DEFAULT = false;
@@ -169,6 +169,8 @@ public class NMapViewer extends NMapActivity {
 
         // create my location overlay
         mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
+
+        testPathDataOverlay();
     }
 
     @Override
@@ -253,21 +255,22 @@ public class NMapViewer extends NMapActivity {
         }
     }
 
+    //폴리곤 그리기, 경로 그리기 등등
     private void testPathDataOverlay() {
 
         // set path data points
         NMapPathData pathData = new NMapPathData(9);
 
         pathData.initPathData();
-        pathData.addPathPoint(127.108099, 37.366034, NMapPathLineStyle.TYPE_SOLID);
-        pathData.addPathPoint(127.108088, 37.366043, 0);
-        pathData.addPathPoint(127.108079, 37.365619, 0);
-        pathData.addPathPoint(127.107458, 37.365608, 0);
-        pathData.addPathPoint(127.107232, 37.365608, 0);
-        pathData.addPathPoint(127.106904, 37.365624, 0);
-        pathData.addPathPoint(127.105933, 37.365621, NMapPathLineStyle.TYPE_DASH);
-        pathData.addPathPoint(127.105929, 37.366378, 0);
-        pathData.addPathPoint(127.106279, 37.366380, 0);
+        pathData.addPathPoint(127.0597, 37.6195, NMapPathLineStyle.TYPE_SOLID);
+        pathData.addPathPoint(127.0597, 37.6196, 0);
+        pathData.addPathPoint(127.0597, 37.6197, 0);
+        pathData.addPathPoint(127.0597, 37.6198, 0);
+        pathData.addPathPoint(127.0597, 37.6199, 0);
+        pathData.addPathPoint(127.0597, 37.62001, 0);
+        pathData.addPathPoint(127.0598, 37.62001, NMapPathLineStyle.TYPE_DASH);
+        pathData.addPathPoint(127.05982, 37.6212, 0);
+        pathData.addPathPoint(127.05983, 37.6213, 0);
         pathData.endPathData();
 
         NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(pathData);
@@ -276,29 +279,29 @@ public class NMapViewer extends NMapActivity {
             // add path data with polygon type
             NMapPathData pathData2 = new NMapPathData(4);
             pathData2.initPathData();
-            pathData2.addPathPoint(127.106, 37.367, NMapPathLineStyle.TYPE_SOLID);
-            pathData2.addPathPoint(127.107, 37.367, 0);
-            pathData2.addPathPoint(127.107, 37.368, 0);
-            pathData2.addPathPoint(127.106, 37.368, 0);
+            pathData2.addPathPoint(127.0597, 37.6195, NMapPathLineStyle.TYPE_SOLID);
+            pathData2.addPathPoint(127.0598, 37.6196, 0);
+            pathData2.addPathPoint(127.0598, 37.6197, 0);
+            pathData2.addPathPoint(127.0597, 37.6198, 0);
             pathData2.endPathData();
             pathDataOverlay.addPathData(pathData2);
             // set path line style
             NMapPathLineStyle pathLineStyle = new NMapPathLineStyle(mMapView.getContext());
             pathLineStyle.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            pathLineStyle.setLineColor(0xA04DD2, 0xff);
-            pathLineStyle.setFillColor(0xFFFFFF, 0x00);
+            pathLineStyle.setLineColor(0xA04DD2, 0x66);
+            pathLineStyle.setFillColor(0xA04DD2, 0x66);
             pathData2.setPathLineStyle(pathLineStyle);
 
             // add circle data
             NMapCircleData circleData = new NMapCircleData(1);
             circleData.initCircleData();
-            circleData.addCirclePoint(127.1075, 37.3675, 50.0F);
+            circleData.addCirclePoint(127.0597, 37.6195, 50.0F);
             circleData.endCircleData();
             pathDataOverlay.addCircleData(circleData);
             // set circle style
             NMapCircleStyle circleStyle = new NMapCircleStyle(mMapView.getContext());
             circleStyle.setLineType(NMapPathLineStyle.TYPE_DASH);
-            circleStyle.setFillColor(0x000000, 0x00);
+            circleStyle.setFillColor(0xA050F2, 0x55);
             circleData.setCircleStyle(circleStyle);
 
             // show all path data
@@ -333,9 +336,9 @@ public class NMapViewer extends NMapActivity {
         // set POI data
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
         poiData.beginPOIdata(2);
-        NMapPOIitem item = poiData.addPOIitem(127.0630205, 37.5091300, "Pizza 777-111", markerId, 0);
+        NMapPOIitem item = poiData.addPOIitem(127.0597, 37.6195, "광운대", markerId, 0);
         item.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW);
-        poiData.addPOIitem(127.061, 37.51, "Pizza 123-456", markerId, 0);
+        poiData.addPOIitem(127.0597, 37.6195, "광운대", markerId, 0);
         poiData.endPOIdata();
 
         // create POI data overlay
