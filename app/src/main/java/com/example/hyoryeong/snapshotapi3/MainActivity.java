@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.awareness.snapshot.PlacesResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.Weather;
@@ -33,6 +34,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     TextView headphone;
     Button sensordata;
     Button mapbutton;
+    Button deletebutton;//탈퇴버튼
+    Button Logoutbutton;//로그아웃버튼
 
     private static final String TAG = "Awareness";
     Timer timer;
@@ -70,6 +75,41 @@ public class MainActivity extends AppCompatActivity {
         headphone = (TextView) findViewById(R.id.headphone);
         sensordata=(Button) findViewById(R.id.sensorbutton);
         mapbutton=(Button) findViewById(R.id.mapbutton);
+        //탈퇴 버튼
+        deletebutton=(Button) findViewById(R.id.deletebutton);
+        //로그아웃 버튼
+        Logoutbutton = (Button) findViewById(R.id.logoutbutton);
+
+        //탈퇴버튼 리스너
+        deletebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AuthUI.getInstance()
+                        .delete(MainActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d("Auth","user info deleted");
+                                startActivity(new Intent(MainActivity.this,StartActivity.class));
+                            }
+                        });
+            }
+        });
+
+        //로그아웃 버튼 리스너
+        Logoutbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AuthUI.getInstance()
+                        .signOut(MainActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d("Auth", "Signed out");
+                                startActivity(new Intent(MainActivity.this, StartActivity.class));
+                            }
+                        });
+            }
+        });
 
         client = new GoogleApiClient.Builder(MainActivity.this)
                 .addApi(Awareness.API)

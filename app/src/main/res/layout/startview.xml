@@ -12,16 +12,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="142dp"
-        android:text="HR LOGO"
-        android:textSize="30sp" />
+        android:layout_marginTop="122dp"
+        android:fontFamily="cursive"
+        android:text="HR project app"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <Button
-        android:id="@+id/startbutton"
+        android:id="@+id/authbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="179dp"
-        android:text="App start" />
+        android:layout_marginBottom="132dp"
+        android:text="로그인"
+        android:textAppearance="@style/TextAppearance.AppCompat.Menu" />
+
 </android.widget.RelativeLayout>

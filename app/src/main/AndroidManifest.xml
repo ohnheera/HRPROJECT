@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hyoryeong.snapshotapi3">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,25 +16,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity">
+        <activity android:name=".LoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".loginActivity"></activity>
-        <activity android:name=".SensorActivity"></activity>
-        <activity android:name=".NMapViewer"></activity>
-        <activity android:name=".FragmentMapActivity"></activity>
+        <activity android:name=".StartActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".loginActivity" />
+        <activity android:name=".SensorActivity" />
+        <activity android:name=".NMapViewer" />
+        <activity android:name=".FragmentMapActivity" />
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8"/>
+            android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8"/>
+            android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8" />
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8" />
