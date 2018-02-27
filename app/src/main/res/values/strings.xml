@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SnapshotAPI3</string>
+    <string name="app_name">HR Project app</string>
     <string name="str_done">Done</string>
 
     <string name="title_activity_loading">LoadingActivity</string>

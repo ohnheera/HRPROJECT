@@ -29,6 +29,7 @@
         <activity android:name=".SensorActivity" />
         <activity android:name=".NMapViewer" />
         <activity android:name=".FragmentMapActivity" />
+        <activity android:name=".UserinfoActivity"/>
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
@@ -39,6 +40,8 @@
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyA20oiEdrg9JI8PzgccqSMn30eCbhEVm_8" />
+
+
     </application>
 
 </manifest>

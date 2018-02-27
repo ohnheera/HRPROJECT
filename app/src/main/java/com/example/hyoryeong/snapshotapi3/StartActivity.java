@@ -1,7 +1,9 @@
 package com.example.hyoryeong.snapshotapi3;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +29,9 @@ import java.util.List;
 public class StartActivity extends AppCompatActivity {
 
     Button Authbutton;
+
+    //db
+    SharedPreferences pref;
 
     private static final int RC_SIGN_IN = 123;
 
@@ -58,27 +65,34 @@ public class StartActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        pref= getSharedPreferences("pref", MODE_PRIVATE);
+
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                //로그인 성공시 main
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d("Auth","Signed in");
-                startActivity(new Intent(StartActivity.this,MainActivity.class));
-                finish();
-                //move to main activity
-                // ...
+                Log.d("Auth", "Signed in");
+
+                //사용자 정보 저장 여부 확인 -> 존재시 main, 미존재시 userinfo로
+                if ((pref.getInt("A", 0) + pref.getInt("B", 0)) == 0) {
+                    startActivity(new Intent(StartActivity.this, UserinfoActivity.class));
+                    finish();
+                } else {
+                    startActivity(new Intent(StartActivity.this, MainActivity.class));
+                    finish();
+                }
             } else {
                 //로그인 미성공시 스타트로
                 // Sign in failed, check response for error code
                 // ...
-                Log.d("Auth","Sign in failed");
-                startActivity(new Intent(StartActivity.this,StartActivity.class));
+                Log.d("Auth", "Sign in failed");
+                startActivity(new Intent(StartActivity.this, StartActivity.class));
                 finish();
                 //move to start activity
             }
         }
     }
 }
+

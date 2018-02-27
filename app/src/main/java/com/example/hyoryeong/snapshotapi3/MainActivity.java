@@ -3,10 +3,12 @@ package com.example.hyoryeong.snapshotapi3;
 import android.Manifest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     Button mapbutton;
     Button deletebutton;//탈퇴버튼
     Button Logoutbutton;//로그아웃버튼
+    Button Editbutton;//정보수정버튼
 
     private static final String TAG = "Awareness";
     Timer timer;
@@ -63,9 +66,18 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference myRef4 = database.getReference("Places");
     DatabaseReference myRef5 = database.getReference("Weather");
 
+    //사용자 정보 db 변수
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+
     //@RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //사용자 정보 db
+        pref= getSharedPreferences("pref", MODE_PRIVATE);
+        editor = pref.edit();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activi = (TextView) findViewById(R.id.activity);
@@ -79,11 +91,29 @@ public class MainActivity extends AppCompatActivity {
         deletebutton=(Button) findViewById(R.id.deletebutton);
         //로그아웃 버튼
         Logoutbutton = (Button) findViewById(R.id.logoutbutton);
+        //정보수정 버튼
+        Editbutton= (Button)findViewById(R.id.editbutton);
+
+
+        //정보수정버튼 리스너
+        Editbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //DB 삭제
+                editor.clear();
+                editor.commit();
+                startActivity(new Intent(MainActivity.this, UserinfoActivity.class));
+            }
+        });
 
         //탈퇴버튼 리스너
         deletebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //DB 삭제
+                editor.clear();
+                editor.commit();
+                //사용자 정보 삭제
                 AuthUI.getInstance()
                         .delete(MainActivity.this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
