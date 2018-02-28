@@ -130,9 +130,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Editbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //DB 삭제
-                editor.clear();
-                editor.commit();
                 startActivity(new Intent(MainActivity.this, UserinfoActivity.class));
                 finish();
             }
@@ -163,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Logoutbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editor.clear();
+                editor.commit();
                 AuthUI.getInstance()
                         .signOut(MainActivity.this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="156dp"
         android:layout_marginTop="28dp"
-        android:text="\n   사용자 정보를 입력해주세요.\n 정보는 핸드폰에만 저장됩니다."
+        android:text="\n\n사용자 정보를 입력해주세요.\n 정보는 핸드폰에만 저장됩니다."
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -127,5 +127,17 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="사용자 정보는 로그아웃, 탈퇴, 어플 삭제 시 삭제됩니다."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/store" />
 
 </android.support.constraint.ConstraintLayout>
