@@ -58,25 +58,15 @@
         android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent" />
 
-    <Button
-        android:id="@+id/sensorbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sensor Data"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="507dp"
-        android:layout_marginLeft="30dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <Button
+    <ImageButton
         android:id="@+id/mapbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Map"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="507dp"
-        android:layout_marginLeft="160dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="304dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/maps_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/MapContainer"
@@ -147,6 +137,23 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.964" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/sensordata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="508dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="Smartphone sensor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
 
