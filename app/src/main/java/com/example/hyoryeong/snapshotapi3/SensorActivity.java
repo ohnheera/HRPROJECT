@@ -33,11 +33,11 @@ public class SensorActivity extends Activity implements SensorEventListener {
     String gravity="Gravity:";
 
     FirebaseDatabase database= FirebaseDatabase.getInstance();
-    DatabaseReference myRef=database.getReference("Accelometer");
-    DatabaseReference myRef1=database.getReference("Light");
-    DatabaseReference myRef2=database.getReference("Magnetic field");
-    DatabaseReference myRef3=database.getReference("Gyroscope");
-    DatabaseReference myRef4=database.getReference("Gravity");
+    DatabaseReference Accel=database.getReference("Accelometer");
+    DatabaseReference Light=database.getReference("Light");
+    DatabaseReference Magnet=database.getReference("Magnetic field");
+    DatabaseReference Gyro=database.getReference("Gyroscope");
+    DatabaseReference Grav=database.getReference("Gravity");
 
 
     private static final float NS2S = 1.0f / 1000000000.0f;
@@ -78,13 +78,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
             accelometer="<"+linear_acceleration[0]+","+linear_acceleration[1]+","+linear_acceleration[2]+"> ";
             Log.e("Accelometer", accelometer);
-            myRef.setValue(accelometer);
+            Accel.setValue(accelometer);
         }
         else if(sens.getType()==Sensor.TYPE_LIGHT){
             float lux=event.values[0];
             light=lux+" ";
             Log.e("Light", light);
-            myRef1.setValue(light);
+            Light.setValue(light);
         }
         else if(sens.getType()==Sensor.TYPE_MAGNETIC_FIELD){
             double[] mag={0,0,0};
@@ -93,7 +93,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
             mag[2]=event.values[2];
             magnetic="<"+mag[0]+","+mag[1]+","+mag[2]+"> ";
             Log.e("Magnetic",magnetic);
-            myRef2.setValue(magnetic);
+            Magnet.setValue(magnetic);
         }
         else if(sens.getType()==Sensor.TYPE_GYROSCOPE){
             // This time step's delta rotation to be multiplied by the current rotation
@@ -139,7 +139,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
             }
             gyroscope+="> ";
             Log.e("Gyroscope",gyroscope);
-            myRef3.setValue(gyroscope);
+            Gyro.setValue(gyroscope);
         }
         else if(sens.getType()==Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR){
             float [] geomag={0,0,0};
@@ -158,7 +158,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
             gravity="<"+grav[0]+","+grav[1]+","+grav[2]+"> ";
             Log.e("Gravity:", gravity);
-            myRef4.setValue(gravity);
+            Grav.setValue(gravity);
         }
     }
 
