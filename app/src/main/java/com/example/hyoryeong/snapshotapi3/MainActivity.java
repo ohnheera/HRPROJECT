@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.clear();
                 editor.commit();
                 startActivity(new Intent(MainActivity.this, UserinfoActivity.class));
+                finish();
             }
         });
 
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.d("Auth","user info deleted");
                                 startActivity(new Intent(MainActivity.this,StartActivity.class));
+                                finish();
                             }
                         });
             }
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.d("Auth", "Signed out");
                                 startActivity(new Intent(MainActivity.this, StartActivity.class));
+                                finish();
                             }
                         });
             }

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -33,6 +34,7 @@ public class UserinfoActivity extends AppCompatActivity {
     CheckBox men;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    TextView ageview;
 
     String[] items = {"6세 이하","7 ~ 12세","13 ~ 15세","16 ~ 20세","21 ~ 30세", "31 ~ 40세","41 ~ 50세","51 ~ 60세", "61세 이상"};
 
@@ -40,7 +42,7 @@ public class UserinfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         //db에 저장
-        pref= PreferenceManager.getDefaultSharedPreferences(this);
+        pref= getSharedPreferences("pref", MODE_PRIVATE);
         editor = pref.edit();
 
         super.onCreate(savedInstanceState);
@@ -51,6 +53,28 @@ public class UserinfoActivity extends AppCompatActivity {
         age = (Spinner) findViewById(R.id.spinner);
         women = (CheckBox) findViewById(R.id.woman);
         men = (CheckBox) findViewById(R.id.man);
+        ageview = (TextView) findViewById(R.id.ageview);
+
+        //이미 저장된 정보를 표시
+        //성별 정보
+        if(pref.getInt("A",0)==1){
+            women.setChecked(true);
+        }
+        else if(pref.getInt("B",0)==1){
+            men.setChecked(true);
+        }
+        //나이 정보
+        //"6세 이하","7 ~ 12세","13 ~ 15세","16 ~ 20세","21 ~ 30세", "31 ~ 40세","41 ~ 50세","51 ~ 60세", "61세 이상"
+        //    a          b          c           d           e            f           g          h           i
+        if(pref.getInt("a",0)==1) ageview.setText("6세 이하");
+        else if(pref.getInt("b",0)==1) ageview.setText("7 ~ 12세");
+        else if(pref.getInt("c",0)==1) ageview.setText("13 ~ 15세");
+        else if(pref.getInt("d",0)==1) ageview.setText("16 ~ 20세");
+        else if(pref.getInt("e",0)==1) ageview.setText("21 ~ 30세");
+        else if(pref.getInt("f",0)==1) ageview.setText("31 ~ 40세");
+        else if(pref.getInt("g",0)==1) ageview.setText("41 ~ 50세");
+        else if(pref.getInt("h",0)==1) ageview.setText("51 ~ 60세");
+        else if(pref.getInt("i",0)==1) ageview.setText("61세 이상");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, items);

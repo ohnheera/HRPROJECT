@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -41,6 +42,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.startview);
 
         //로그인 페이지 호출 버튼
+        //프로바이더 추가 가능 - 시간남으면 하기
         Authbutton = (Button) findViewById(R.id.authbutton);
         Authbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +79,11 @@ public class StartActivity extends AppCompatActivity {
 
                 //사용자 정보 저장 여부 확인 -> 존재시 main, 미존재시 userinfo로
                 if ((pref.getInt("A", 0) + pref.getInt("B", 0)) == 0) {
+                    Toast.makeText(getApplicationContext(),"사용자 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(StartActivity.this, UserinfoActivity.class));
                     finish();
                 } else {
+                    Toast.makeText(getApplicationContext(),"사용자 정보가 존재합니다.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(StartActivity.this, MainActivity.class));
                     finish();
                 }

@@ -10,6 +10,9 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="317dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="199dp"
         android:src="@drawable/logo" />
 
     <Button
@@ -18,8 +21,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="61dp"
         android:text="로그인"
         android:textAppearance="@style/TextAppearance.AppCompat.Menu" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/authbutton"
+        android:layout_below="@+id/authbutton"
+        android:layout_marginTop="98dp"
+        android:text="made by HR"
+        android:textSize="18sp" />
 
 </android.widget.RelativeLayout>
