@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HR_project.iml" filepath="$PROJECT_DIR$/HR_project.iml" />
-      <module fileurl="file://C:\Users\Hyoryeong\Desktop\maps.android-master\HR_project\HR_project.iml" filepath="C:\Users\Hyoryeong\Desktop\maps.android-master\HR_project\HR_project.iml" />
-      <module fileurl="file://D:\HR_project\.idea\HR_project.iml" filepath="D:\HR_project\.idea\HR_project.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/naver-map-api/naver-map-api.iml" filepath="$PROJECT_DIR$/naver-map-api/naver-map-api.iml" />
     </modules>

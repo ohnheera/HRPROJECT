@@ -2,6 +2,7 @@ package com.example.hyoryeong.snapshotapi3;
 
 import android.Manifest;
 
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,16 +19,29 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//import com.astuetz.PagerSlidingTabStrip;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.awareness.snapshot.PlacesResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
@@ -52,7 +66,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener{
+public class MainActivity extends AppCompatActivity implements SensorEventListener, ViewFlipperAction.ViewFlipperCallback {
     private static final int MY_PERMISSION_LOCATION = 1;
     private SensorManager mSensorManager;
 
@@ -66,6 +80,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button Logoutbutton;//로그아웃버튼
     Button Editbutton;//정보수정버튼
     TextView sensordata;
+    Button btnPrev, btnNext;
+    ViewFlipper vFlipper;
+    RelativeLayout mapView;
+
+    List<ImageView> indexes;
 
 
     String accelometer="Acc:";
@@ -110,6 +129,50 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btnPrev=(Button) findViewById(R.id.btnPrev);
+        btnNext=(Button)findViewById(R.id.btnNext);
+        vFlipper=(ViewFlipper)findViewById(R.id.viewFlipper1);
+        mapView=(RelativeLayout)findViewById(R.id.MapLayout);
+        ImageView index0=(ImageView)findViewById(R.id.imgIndex0);
+        ImageView index1=(ImageView)findViewById(R.id.imgIndex1);
+        ImageView index2=(ImageView)findViewById(R.id.imgIndex2);
+        ImageView index3=(ImageView)findViewById(R.id.imgIndex3);
+        ImageView index4=(ImageView)findViewById(R.id.imgIndex4);
+
+        //인덱스 리스트
+        indexes=new ArrayList<>();
+        indexes.add(index0);
+        indexes.add(index1);
+        indexes.add(index2);
+        indexes.add(index3);
+        indexes.add(index4);
+
+        //좌우 슬라이드 시 화면 넘어가기
+        vFlipper.setOnTouchListener(new ViewFlipperAction(this,vFlipper));
+
+        btnPrev.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                vFlipper.showPrevious();
+                if(vFlipper.getCurrentView()==mapView){
+                    startActivity(new Intent(MainActivity.this, NMapViewer.class));
+                }
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                vFlipper.showNext();
+                if(vFlipper.getCurrentView()==mapView){
+                    startActivity(new Intent(MainActivity.this, NMapViewer.class));
+                }
+            }
+        });
+
         activi = (TextView) findViewById(R.id.activity);
         locat = (TextView) findViewById(R.id.location);
         place = (TextView) findViewById(R.id.place);
@@ -190,14 +253,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         timer.schedule(timertask,1000,1000);
 
-        /*sensordata.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SensorActivity.class));
-            }
-        });*/
-
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         mapbutton.setOnClickListener(new View.OnClickListener(){
@@ -207,6 +262,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 startActivity(new Intent(MainActivity.this, NMapViewer.class));
             }
         });
+    }
+
+    public void onFlipperActionCallback(int position){
+        for(int i=0;i<indexes.size();i++){
+            ImageView index=indexes.get(i);
+            if(i==position){
+                index.setImageResource(android.R.drawable.presence_online);
+            }
+            else{
+                index.setImageResource(android.R.drawable.presence_invisible);
+            }
+        }
+        if(vFlipper.getCurrentView()==mapView){
+            startActivity(new Intent(MainActivity.this, NMapViewer.class));
+        }
     }
 
     @Override
@@ -235,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelometer="<"+linear_acceleration[0]+","+linear_acceleration[1]+","+linear_acceleration[2]+"> ";
             Log.e("Accelometer", accelometer);
             Accel.setValue(accelometer);
+
         }
         else if(sens.getType()==Sensor.TYPE_LIGHT){
             float lux=event.values[0];
@@ -318,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         sensordata.setText(accelometer+","+Light+","+gravity+","+gyroscope+","+magnetic);
+
     }
 
     @Override
