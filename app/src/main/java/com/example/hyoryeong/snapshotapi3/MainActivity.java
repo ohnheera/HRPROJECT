@@ -36,12 +36,15 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//import com.astuetz.PagerSlidingTabStrip;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.awareness.snapshot.PlacesResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int MY_PERMISSION_LOCATION = 1;
     private SensorManager mSensorManager;
 
+    //UI
     TextView activi;
     TextView locat;
     TextView place;
@@ -83,10 +87,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button btnPrev, btnNext;
     ViewFlipper vFlipper;
     RelativeLayout mapView;
-
     List<ImageView> indexes;
 
-
+    //TAGS
     String accelometer="Acc:";
     String light="Lux:";
     String magnetic="Mag:";
@@ -100,6 +103,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final float NS2S = 1.0f / 1000000000.0f;
     private final float[] deltaRotationVector = new float[4];
     private float timestamp;
+
+    //crime 정보 받아올 인자들
+    InputStream inputstream;
+    String[][] ids=new String[61][9];
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -147,6 +154,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         indexes.add(index2);
         indexes.add(index3);
         indexes.add(index4);
+
+        //crime 정보 받아오기
+        inputstream=getResources().openRawResource(R.raw.crimeinfo);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream));
+        try {
+            String csvLine;
+            int i=0,j=0;
+            while ((csvLine = reader.readLine()) != null) {
+                ids[i]=csvLine.split(",");
+                try{
+                    Log.e("Collumn 1 ",""+ids[i][0]+ids[i][1]) ;
+
+                }catch (Exception e){
+                    Log.e("Unknown",e.toString());
+                }
+                i++;
+            }
+        }
+        catch (IOException ex) {
+            throw new RuntimeException("Error in reading CSV file: "+ex);
+        }
 
         //좌우 슬라이드 시 화면 넘어가기
         vFlipper.setOnTouchListener(new ViewFlipperAction(this,vFlipper));
