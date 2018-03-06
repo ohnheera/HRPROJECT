@@ -42,7 +42,7 @@ public class UserinfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         //db에 저장
-        pref= getSharedPreferences("pref", MODE_PRIVATE);
+        pref= getSharedPreferences("auth", MODE_PRIVATE);
         editor = pref.edit();
 
         super.onCreate(savedInstanceState);
@@ -57,10 +57,10 @@ public class UserinfoActivity extends AppCompatActivity {
 
         //이미 저장된 정보를 표시
         //성별 정보
-        if(pref.getInt("A",0)==1){
+        if(pref.getInt("X",0)==1){
             women.setChecked(true);
         }
-        else if(pref.getInt("B",0)==1){
+        else if(pref.getInt("Y",0)==1){
             men.setChecked(true);
         }
         //나이 정보
@@ -92,7 +92,7 @@ public class UserinfoActivity extends AppCompatActivity {
                     }
                     else{
                         //여자만 체크 -> 나이 확인 후 메인화면으로
-                        editor.putInt("A",1);
+                        editor.putInt("X",1);
                         setage(age.getSelectedItem().toString());
                         editor.commit(); //완료한다.
                         startActivity(new Intent(UserinfoActivity.this,MainActivity.class));
@@ -101,7 +101,7 @@ public class UserinfoActivity extends AppCompatActivity {
                 }
                 else if(men.isChecked()){
                     //남자만 체크 -> 나이 확인 후 메인화면으로
-                    editor.putInt("B",1);
+                    editor.putInt("Y",1);
                     setage(age.getSelectedItem().toString());
                     editor.commit(); //완료한다.
                     startActivity(new Intent(UserinfoActivity.this,MainActivity.class));

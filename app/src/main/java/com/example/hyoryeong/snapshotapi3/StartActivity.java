@@ -67,7 +67,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        pref= getSharedPreferences("pref", MODE_PRIVATE);
+        pref= getSharedPreferences("auth", MODE_PRIVATE);
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
@@ -78,7 +78,7 @@ public class StartActivity extends AppCompatActivity {
                 Log.d("Auth", "Signed in");
 
                 //사용자 정보 저장 여부 확인 -> 존재시 main, 미존재시 userinfo로
-                if ((pref.getInt("A", 0) + pref.getInt("B", 0)) == 0) {
+                if ((pref.getInt("X", 0) + pref.getInt("Y", 0)) == 0) {
                     Toast.makeText(getApplicationContext(),"사용자 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(StartActivity.this, UserinfoActivity.class));
                     finish();
