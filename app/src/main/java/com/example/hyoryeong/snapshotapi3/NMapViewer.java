@@ -34,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
@@ -58,6 +59,11 @@ import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -483,12 +489,46 @@ public class NMapViewer extends NMapActivity {
              127.06292724858376, 37.661389423585433 ,  127.06353718387659, 37.661390627484138 ,  127.06423320650813, 37.661392002079182 ,
              127.06568508673311, 37.661396230157663};
 
+    //db
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+
+    //crime 정보 받아올 인자들
+    InputStream inputstream;
+    String[][] data=new String[61][9];
+    int[] crimecolor=new int[61];
+
+    //crime
+    int[] murder=new int[61];
 
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //crime 정보 받아오기
+        inputstream=getResources().openRawResource(R.raw.crimeinfo);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream));
+        try {
+            String csvLine;
+            int i=0,j=0;
+            while ((csvLine = reader.readLine()) != null) {
+                data[i]=csvLine.split(",");
+                try{
+                    Log.e("Crimedata ",""+data[i][0]+data[i][1]+data[i][2]) ;
+
+                }catch (Exception e){
+                    Log.e("Unknown",e.toString());
+                }
+                i++;
+            }
+        }
+        catch (IOException ex) {
+            throw new RuntimeException("Error in reading CSV file: "+ex);
+        }
+
+        setCrimeColor();
 
         if (USE_XML_LAYOUT) {
             setContentView(R.layout.mapview);
@@ -555,6 +595,23 @@ public class NMapViewer extends NMapActivity {
         timer=new Timer();
 
         testPathDataOverlay();
+    }
+
+    //사용자 정보 함수에 따라 범죄 지도 색깔 정하는 함수
+    private void setCrimeColor(){
+        //사용자 정보 db
+        pref= getSharedPreferences("pref", MODE_PRIVATE);
+
+        double mur=2 * (pref.getInt("X", 0) * (0.421 + (pref.getInt("a",0) * 0.042 + pref.getInt("b",0) * 0.013 + pref.getInt("c",0) * 0.003 + pref.getInt("d",0) * 0.021 + pref.getInt("e",0) * 0.087 + pref.getInt("f",0) * 0.132 + pref.getInt("g",0) * 0.28 + pref.getInt("h",0) * 0.219 + pref.getInt("i",0) * 0.203))
+                + pref.getInt("Y",0) * (0.579 + (pref.getInt("a",0) * 0.027 + pref.getInt("b",0) * 0.012 + pref.getInt("c",0) * 0.004 + pref.getInt("d",0) * 0.027 + pref.getInt("e",0) * 0.111 + pref.getInt("f",0) * 0.188 + pref.getInt("g",0) * 0.242 + pref.getInt("h",0) * 0.232 + pref.getInt("i",0) * 0.157)));
+
+        //함 이렇게 함수 구성하고 돌려봤는데 다 0으로 뜨넹ㅋㅋㅋ 6세 이하 여자로 해봤는데 a랑 X가 0으로 떴져..
+        Log.e("mur",String.valueOf(mur));
+        Log.e("mur",String.valueOf(pref.getInt("X",0))); //여자
+        Log.e("mur",String.valueOf(pref.getInt("Y",0))); //남자
+        Log.e("mur",String.valueOf(pref.getInt("a",0)));//6세 이하
+
+
     }
 
     @Override
@@ -641,117 +698,8 @@ public class NMapViewer extends NMapActivity {
 
     //폴리곤 그리기, 경로 그리기 등등
     private void testPathDataOverlay() {
-        //노원구 월계1동
-        NMapPathData wolgye1=new NMapPathData(98);
-        wolgye1.initPathData();
-        for(int i=1;i<98;i+=2){
-            double lat= wolgye1locat[i-1];
-            double lon= wolgye1locat[i];
-            wolgye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        wolgye1.endPathData();
 
-        //노원구 월계2동
-        NMapPathData wolgye2=new NMapPathData(78);
-        wolgye2.initPathData();
-        for(int i=1;i<78;i+=2){
-            double lat= wolgye2locat[i-1];
-            double lon= wolgye2locat[i];
-            wolgye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        wolgye2.endPathData();
-
-        //노원구 월계3동
-        NMapPathData wolgye3=new NMapPathData(110);
-        wolgye3.initPathData();
-        for(int i=1;i<110;i+=2){
-            double lat= wolgye3locat[i-1];
-            double lon= wolgye3locat[i];
-            wolgye3.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        wolgye3.endPathData();
-
-        //노원구 공릉1동
-        NMapPathData gongreung1=new NMapPathData(138);
-        gongreung1.initPathData();
-        for(int i=1;i<138;i+=2){
-            double lat= gongreung1locat[i-1];
-            double lon=gongreung1locat[i];
-            gongreung1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        gongreung1.endPathData();
-
-        //노원구 공릉2동
-        NMapPathData gongreung2=new NMapPathData(306);
-        gongreung2.initPathData();
-        for(int i=1;i<306;i+=2){
-            double lat= gongreung2locat[i-1];
-            double lon=gongreung2locat[i];
-            gongreung2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        gongreung2.endPathData();
-
-        //노원구 하계1동
-        NMapPathData hagye1=new NMapPathData(64);
-        hagye1.initPathData();
-        for(int i=1;i<64;i+=2){
-            double lat= hagye1locat[i-1];
-            double lon=hagye1locat[i];
-            hagye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        hagye1.endPathData();
-
-        //노원구 하계2동
-        NMapPathData hagye2=new NMapPathData(42);
-        hagye2.initPathData();
-        for(int i=1;i<42;i+=2){
-            double lat= hagye2locat[i-1];
-            double lon=hagye2locat[i];
-            hagye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        hagye2.endPathData();
-
-        //노원구 중계본동
-        NMapPathData joongyebon=new NMapPathData(112);
-        joongyebon.initPathData();
-        for(int i=1;i<112;i+=2){
-            double lat= joongyebonlocat[i-1];
-            double lon=joongyebonlocat[i];
-            joongyebon.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        joongyebon.endPathData();
-
-        //노원구 중계1동
-        NMapPathData joongye1=new NMapPathData(70);
-        joongye1.initPathData();
-        for(int i=1;i<70;i+=2){
-            double lat= joongye1locat[i-1];
-            double lon=joongye1locat[i];
-            joongye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        joongye1.endPathData();
-
-        //노원구 중계2,3동
-        NMapPathData joongye23=new NMapPathData(54);
-        joongye23.initPathData();
-        for(int i=1;i<54;i+=2){
-            double lat= joongye23locat[i-1];
-            double lon=joongye23locat[i];
-            joongye23.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        joongye23.endPathData();
-
-        //노원구 중계4동
-        NMapPathData joongye4=new NMapPathData(48);
-        joongye4.initPathData();
-        for(int i=1;i<48;i+=2){
-            double lat= joongye4locat[i-1];
-            double lon=joongye4locat[i];
-            joongye4.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        joongye4.endPathData();
-
-        //노원구 상계1동
+        //노원구 상계1동 - 1
         NMapPathData sangye1=new NMapPathData(170);
         sangye1.initPathData();
         for(int i=1;i<170;i+=2){
@@ -761,17 +709,7 @@ public class NMapViewer extends NMapActivity {
         }
         sangye1.endPathData();
 
-        //노원구 상계2동
-        NMapPathData sangye2=new NMapPathData(84);
-        sangye2.initPathData();
-        for(int i=1;i<84;i+=2){
-            double lat= sangye2locat[i-1];
-            double lon= sangye2locat[i];
-            sangye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        sangye2.endPathData();
-
-        //노원구 상계3,4동
+        //노원구 상계3,4동 - 2
         NMapPathData sangye34=new NMapPathData(212);
         sangye34.initPathData();
         for(int i=1;i<212;i+=2){
@@ -781,27 +719,7 @@ public class NMapViewer extends NMapActivity {
         }
         sangye34.endPathData();
 
-        //노원구 상계5동
-        NMapPathData sangye5=new NMapPathData(56);
-        sangye5.initPathData();
-        for(int i=1;i<56;i+=2){
-            double lat= sangye5locat[i-1];
-            double lon= sangye5locat[i];
-            sangye5.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        sangye5.endPathData();
-
-        //노원구 상계6,7동
-        NMapPathData sangye67=new NMapPathData(108);
-        sangye67.initPathData();
-        for(int i=1;i<108;i+=2){
-            double lat= sangye67locat[i-1];
-            double lon= sangye67locat[i];
-            sangye67.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
-        }
-        sangye67.endPathData();
-
-        //노원구 상계8동
+        //노원구 상계8동 - 3
         NMapPathData sangye8=new NMapPathData(44);
         sangye8.initPathData();
         for(int i=1;i<44;i+=2){
@@ -811,7 +729,7 @@ public class NMapViewer extends NMapActivity {
         }
         sangye8.endPathData();
 
-        //노원구 상계9동
+        //노원구 상계9동 - 4
         NMapPathData sangye9=new NMapPathData(70);
         sangye9.initPathData();
         for(int i=1;i<70;i+=2){
@@ -821,7 +739,7 @@ public class NMapViewer extends NMapActivity {
         }
         sangye9.endPathData();
 
-        //노원구 상계10동
+        //노원구 상계10동 - 5
         NMapPathData sangye10=new NMapPathData(78);
         sangye10.initPathData();
         for(int i=1;i<78;i+=2){
@@ -831,7 +749,147 @@ public class NMapViewer extends NMapActivity {
         }
         sangye10.endPathData();
 
-        ///////////////////////////월계 1동 상세히///////////////////////////////////////
+        //노원구 상계5동 - 6
+        NMapPathData sangye5=new NMapPathData(56);
+        sangye5.initPathData();
+        for(int i=1;i<56;i+=2){
+            double lat= sangye5locat[i-1];
+            double lon= sangye5locat[i];
+            sangye5.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        sangye5.endPathData();
+
+        //노원구 중계4동 - 7
+        NMapPathData joongye4=new NMapPathData(48);
+        joongye4.initPathData();
+        for(int i=1;i<48;i+=2){
+            double lat= joongye4locat[i-1];
+            double lon=joongye4locat[i];
+            joongye4.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        joongye4.endPathData();
+
+        //노원구 상계2동 - 8
+        NMapPathData sangye2=new NMapPathData(84);
+        sangye2.initPathData();
+        for(int i=1;i<84;i+=2){
+            double lat= sangye2locat[i-1];
+            double lon= sangye2locat[i];
+            sangye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        sangye2.endPathData();
+
+        //노원구 상계6,7동 - 9
+        NMapPathData sangye67=new NMapPathData(108);
+        sangye67.initPathData();
+        for(int i=1;i<108;i+=2){
+            double lat= sangye67locat[i-1];
+            double lon= sangye67locat[i];
+            sangye67.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        sangye67.endPathData();
+
+        //노원구 중계1동 - 10
+        NMapPathData joongye1=new NMapPathData(70);
+        joongye1.initPathData();
+        for(int i=1;i<70;i+=2){
+            double lat= joongye1locat[i-1];
+            double lon=joongye1locat[i];
+            joongye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        joongye1.endPathData();
+
+        //노원구 중계본동 - 11
+        NMapPathData joongyebon=new NMapPathData(112);
+        joongyebon.initPathData();
+        for(int i=1;i<112;i+=2){
+            double lat= joongyebonlocat[i-1];
+            double lon=joongyebonlocat[i];
+            joongyebon.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        joongyebon.endPathData();
+
+        //노원구 중계2,3동 - 12
+        NMapPathData joongye23=new NMapPathData(54);
+        joongye23.initPathData();
+        for(int i=1;i<54;i+=2){
+            double lat= joongye23locat[i-1];
+            double lon=joongye23locat[i];
+            joongye23.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        joongye23.endPathData();
+
+        //노원구 하계1동 - 13
+        NMapPathData hagye1=new NMapPathData(64);
+        hagye1.initPathData();
+        for(int i=1;i<64;i+=2){
+            double lat= hagye1locat[i-1];
+            double lon=hagye1locat[i];
+            hagye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        hagye1.endPathData();
+
+        //노원구 월계2동 - 14
+        NMapPathData wolgye2=new NMapPathData(78);
+        wolgye2.initPathData();
+        for(int i=1;i<78;i+=2){
+            double lat= wolgye2locat[i-1];
+            double lon= wolgye2locat[i];
+            wolgye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        wolgye2.endPathData();
+
+        //노원구 하계2동 - 15
+        NMapPathData hagye2=new NMapPathData(42);
+        hagye2.initPathData();
+        for(int i=1;i<42;i+=2){
+            double lat= hagye2locat[i-1];
+            double lon=hagye2locat[i];
+            hagye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        hagye2.endPathData();
+
+        //노원구 공릉2동 - 16
+        NMapPathData gongreung2=new NMapPathData(306);
+        gongreung2.initPathData();
+        for(int i=1;i<306;i+=2){
+            double lat= gongreung2locat[i-1];
+            double lon=gongreung2locat[i];
+            gongreung2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        gongreung2.endPathData();
+
+        //노원구 월계1동 - 17
+        NMapPathData wolgye1=new NMapPathData(98);
+        wolgye1.initPathData();
+        for(int i=1;i<98;i+=2){
+            double lat= wolgye1locat[i-1];
+            double lon= wolgye1locat[i];
+            wolgye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        wolgye1.endPathData();
+
+        //노원구 월계3동 - 18
+        NMapPathData wolgye3=new NMapPathData(110);
+        wolgye3.initPathData();
+        for(int i=1;i<110;i+=2){
+            double lat= wolgye3locat[i-1];
+            double lon= wolgye3locat[i];
+            wolgye3.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        wolgye3.endPathData();
+
+        //노원구 공릉1동 -19
+        NMapPathData gongreung1=new NMapPathData(138);
+        gongreung1.initPathData();
+        for(int i=1;i<138;i+=2){
+            double lat= gongreung1locat[i-1];
+            double lon=gongreung1locat[i];
+            gongreung1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+        }
+        gongreung1.endPathData();
+
+        ///////////////////////////월계 1동 상세히 (차례로 20~60)////////////////////////////////
         NMapPathData nemo1=new NMapPathData(4);
         nemo1.initPathData();
         nemo1.addPathPoint(127.050056, 37.624471,NMapPathLineStyle.TYPE_DASH);

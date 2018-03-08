@@ -104,9 +104,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final float[] deltaRotationVector = new float[4];
     private float timestamp;
 
-    //crime 정보 받아올 인자들
-    InputStream inputstream;
-    String[][] ids=new String[61][9];
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -154,27 +151,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         indexes.add(index2);
         indexes.add(index3);
         indexes.add(index4);
-
-        //crime 정보 받아오기
-        inputstream=getResources().openRawResource(R.raw.crimeinfo);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream));
-        try {
-            String csvLine;
-            int i=0,j=0;
-            while ((csvLine = reader.readLine()) != null) {
-                ids[i]=csvLine.split(",");
-                try{
-                    Log.e("Collumn 1 ",""+ids[i][0]+ids[i][1]) ;
-
-                }catch (Exception e){
-                    Log.e("Unknown",e.toString());
-                }
-                i++;
-            }
-        }
-        catch (IOException ex) {
-            throw new RuntimeException("Error in reading CSV file: "+ex);
-        }
 
         //좌우 슬라이드 시 화면 넘어가기
         vFlipper.setOnTouchListener(new ViewFlipperAction(this,vFlipper));
