@@ -600,16 +600,19 @@ public class NMapViewer extends NMapActivity {
     //사용자 정보 함수에 따라 범죄 지도 색깔 정하는 함수
     private void setCrimeColor(){
         //사용자 정보 db
-        pref= getSharedPreferences("pref", MODE_PRIVATE);
+        pref= getSharedPreferences("auth", MODE_PRIVATE);
 
+        //실험용 변수
         double mur=2 * (pref.getInt("X", 0) * (0.421 + (pref.getInt("a",0) * 0.042 + pref.getInt("b",0) * 0.013 + pref.getInt("c",0) * 0.003 + pref.getInt("d",0) * 0.021 + pref.getInt("e",0) * 0.087 + pref.getInt("f",0) * 0.132 + pref.getInt("g",0) * 0.28 + pref.getInt("h",0) * 0.219 + pref.getInt("i",0) * 0.203))
                 + pref.getInt("Y",0) * (0.579 + (pref.getInt("a",0) * 0.027 + pref.getInt("b",0) * 0.012 + pref.getInt("c",0) * 0.004 + pref.getInt("d",0) * 0.027 + pref.getInt("e",0) * 0.111 + pref.getInt("f",0) * 0.188 + pref.getInt("g",0) * 0.242 + pref.getInt("h",0) * 0.232 + pref.getInt("i",0) * 0.157)));
 
-        //함 이렇게 함수 구성하고 돌려봤는데 다 0으로 뜨넹ㅋㅋㅋ 6세 이하 여자로 해봤는데 a랑 X가 0으로 떴당
+        //함 이렇게 함수 구성하고 돌려봤는데 여자 남자 모두 1 한번이라도 체크된 적있는 애들은 모두 1
         Log.e("mur",String.valueOf(mur));
         Log.e("mur",String.valueOf(pref.getInt("X",0))); //여자
         Log.e("mur",String.valueOf(pref.getInt("Y",0))); //남자
         Log.e("mur",String.valueOf(pref.getInt("a",0)));//6세 이하
+        Log.e("mur",String.valueOf(pref.getInt("b",0)));//7세~12세
+        Log.e("mur",String.valueOf(pref.getInt("c",0)));//13세~15세
 
 
     }
