@@ -81,6 +81,10 @@ public class UserinfoActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         age.setAdapter(adapter);
 
+        //DB 삭제
+        editor.clear();
+        //사용자 정보 삭제
+
         //여성 or 남성
         store.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +93,7 @@ public class UserinfoActivity extends AppCompatActivity {
                     if(men.isChecked()){
                         //오류: 성별 둘다 체크 -> 다시 설정하도록
                         Toast.makeText(UserinfoActivity.this, "  여성과 남성 중\n하나만 선택해 주세요.",Toast.LENGTH_LONG).show();
-                    }
+                     }
                     else{
                         //여자만 체크 -> 나이 확인 후 메인화면으로
                         editor.putInt("X",1);

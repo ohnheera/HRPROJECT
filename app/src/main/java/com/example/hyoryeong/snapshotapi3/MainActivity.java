@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
 
         //사용자 정보 db
-        pref= getSharedPreferences("pref", MODE_PRIVATE);
+        pref= getSharedPreferences("auth", MODE_PRIVATE);
         editor = pref.edit();
 
         super.onCreate(savedInstanceState);
