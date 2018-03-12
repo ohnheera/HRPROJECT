@@ -113,8 +113,7 @@ public class NMapViewer extends NMapActivity {
     private static boolean USE_XML_LAYOUT = false;
 
     Timer timer;
-    int[] color={0x66FF66, 0xFFCC33, 0xFF0000, 0x99CCFF, 0x990033};
-    int i=0;
+
     final double[] wolgye1locat={127.06800857238747, 37.615536754261989 ,  127.06801197862414, 37.615437619067542 , 127.06774837079908, 37.615221458271755,
              127.06605194151736, 37.614304866324147 ,  127.06594372381518, 37.614281944675994 ,  127.06486632553198, 37.614222038623318 ,
              127.0628925772738, 37.614343915584001 ,  127.06274332272696, 37.614314069009197 ,  127.06242197958605, 37.614285837610012 ,
@@ -491,15 +490,22 @@ public class NMapViewer extends NMapActivity {
 
     //db
     SharedPreferences pref;
-    SharedPreferences.Editor editor;
 
     //crime 정보 받아올 인자들
     InputStream inputstream;
     String[][] data=new String[61][9];
-    int[] crimecolor=new int[61];
 
-    //crime
-    int[] murder=new int[61];
+    //범죄별 위험도
+    double[] dA=new double[60]; // 살인
+    double[] dB=new double[60]; // 강도
+    double[] dC=new double[60]; // 강간
+    double[] dD=new double[60]; // 폭력
+    double[] dE=new double[60]; // 약취유인
+    double[] dF=new double[60]; // 여성안전
+    double[] dG=new double[60]; // 어린이안전
+    double[] dH=new double[60]; // 노인안전
+    double[] total=new double[60]; // 종합
+    int[] crimecolor=new int[60]; //범죄 위험도 색
 
 
     /** Called when the activity is first created. */
@@ -528,6 +534,7 @@ public class NMapViewer extends NMapActivity {
             throw new RuntimeException("Error in reading CSV file: "+ex);
         }
 
+        //범죄 지도 구성
         setCrimeColor();
 
         if (USE_XML_LAYOUT) {
@@ -597,7 +604,7 @@ public class NMapViewer extends NMapActivity {
         testPathDataOverlay();
     }
 
-    //사용자 정보 함수에 따라 범죄 지도 색깔 정하는 함수
+    //사용자 정보 함수에 따라 범죄 지도의 색(최종 범죄 위험도)을 정하는 함수
     private void setCrimeColor(){
         //사용자 정보 db
         pref= getSharedPreferences("auth", MODE_PRIVATE);
@@ -615,11 +622,66 @@ public class NMapViewer extends NMapActivity {
         int dh=pref.getInt("h",0);
         int di=pref.getInt("i",0);
 
+        double result;
 
-
-
-
-
+        for(int i=0;i<60;i++){
+            // 살인
+            dA[i]= Integer.parseInt(data[i+1][1]) * (dX * (0.421 + (da * 0.042 + db * 0.013 + dc * 0.003 + dd * 0.021 + de * 0.087 + df * 0.132 + dg * 0.28 + dh * 0.219 + di * 0.203))
+                                                    + dY * (0.579 + (da * 0.027 + db * 0.012 + dc * 0.004 + dd * 0.027 + de * 0.111 + df * 0.188 + dg * 0.242 + dh * 0.232 + di * 0.157)));
+            // 강도
+            dB[i]=Integer.parseInt(data[i+1][2]) * (dX * (0.095 + ((da+db+dc+dd) * 0.325 + de * 0.19 + df * 0.135 + dg * 0.184 + dh * 0.11 + di * 0.055 ))
+                                                    + dY * (0.905 + ((da+db+dc+dd) * 0.17 + de * 0.301 + df * 0.235 + dg * 0.164 + dh * 0.098 + di * 0.032)));
+            // 강간
+            dC[i]=Integer.parseInt(data[i+1][3]) * (dX * (0.9464 + (da * 0.00567 + db * 0.035687 + dc * 0.06206923 + dd * 0.202366365 + de * 0.36927554 + df * 0.12854189 + dg * 0.092740083 + dh * 0.062184102 + di * 0.021442794))
+                                                    + dY * (0.0536 + (da * 0.01488498 + db * 0.085926928 + dc * 0.094046008 + dd * 0.185385656 + de * 0.305142084 + df * 0.106224628 + dg * 0.107577808 + dh * 0.065629229 + di *0.025033829)));
+            // 폭력
+            dD[i]=Integer.parseInt(data[i+1][4]) * (dX * (0.378 + ((da+db+dc) * 0.018 + dd * 0.069 + de * 0.178 + df * 0.201 + dg * 0.238 + dh * 0.197 + di * 0.098)
+                                                    + dY * (0.622 + ((da+db+dc) * 0.026 + dd * 0.109 + de * 0.192 + df * 0.159 + dg * 0.193 + dh * 0.213 + di * 0.108))));
+            // 약취유인
+            dE[i]= Integer.parseInt(data[i+1][5]) * (dX * (0.665 + (da * 0.093596059 + db * 0.22962963 + dc * 0.125925926 + dd * 0.207407407 + de * 0.185185185 + df * 0.074074074 + dg * 0.014814815 + dh * 0.022222)
+                    + dY * (0.02906 + (da * 0.305084746 + db * 0.237288136 + dc * 0.101694915 + dd * 0.050847458 + de * 0 + df * 0.084745763 + dg * 0.084745763 + dh * 0.050847458 + di * 0.084745763))));
+            // 여성안전
+            dF[i]=Integer.parseInt(data[i+1][6]);
+            // 어린이안전
+            dG[i]=Integer.parseInt(data[i+1][7]);
+            // 노인안전
+            dH[i]=Integer.parseInt(data[i+1][8]);
+            // 종합
+            total[i]=(dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
+            Log.e("color",String.valueOf(total[i]));
+            result=Math.round(total[i]);
+            //색깔 저장
+            if(result>0&&result<=10){
+                crimecolor[i]=0x98FB98;
+            }
+            else if(result>10&&result<=20){
+                crimecolor[i]=0x20B2AA;
+            }
+            else if(result>20&&result<=30){
+                crimecolor[i]=0x4169E1;
+            }
+            else if(result>30&&result<=40){
+                crimecolor[i]=0x0000CD;
+            }
+            else if(result>40&&result<=50){
+                crimecolor[i]=0xFFFF00;
+            }
+            else if(result>50&&result<=70){
+                crimecolor[i]=0xFFA500;
+            }
+            else if(result>70&&result<=90){
+                crimecolor[i]=0xFF7F50;
+            }
+            else if(result>90&&result<=110){
+                crimecolor[i]=0xF08080;
+            }
+            else if(result>110&&result<=130){
+                crimecolor[i]=0xFF0000;
+            }
+            else{
+                crimecolor[i]=0xB22222;
+            }
+        }
     }
 
     @Override
@@ -707,843 +769,544 @@ public class NMapViewer extends NMapActivity {
     //폴리곤 그리기, 경로 그리기 등등
     private void testPathDataOverlay() {
 
+        NMapPathData[] border;
+        border=new NMapPathData[60];
+
         //노원구 상계1동 - 1
-        NMapPathData sangye1=new NMapPathData(170);
-        sangye1.initPathData();
+        border[0]=new NMapPathData(170);
+        border[0].initPathData();
         for(int i=1;i<170;i+=2){
             double lat= sangye1locat[i-1];
             double lon= sangye1locat[i];
-            sangye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[0].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye1.endPathData();
+        border[0].endPathData();
 
         //노원구 상계3,4동 - 2
-        NMapPathData sangye34=new NMapPathData(212);
-        sangye34.initPathData();
+        border[1]=new NMapPathData(212);
+        border[1].initPathData();
         for(int i=1;i<212;i+=2){
             double lat= sangye34locat[i-1];
             double lon= sangye34locat[i];
-            sangye34.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[1].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye34.endPathData();
+        border[1].endPathData();
 
         //노원구 상계8동 - 3
-        NMapPathData sangye8=new NMapPathData(44);
-        sangye8.initPathData();
+        border[2]=new NMapPathData(44);
+        border[2].initPathData();
         for(int i=1;i<44;i+=2){
             double lat= sangye8locat[i-1];
             double lon= sangye8locat[i];
-            sangye8.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[2].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye8.endPathData();
+        border[2].endPathData();
 
         //노원구 상계9동 - 4
-        NMapPathData sangye9=new NMapPathData(70);
-        sangye9.initPathData();
+        border[3]=new NMapPathData(70);
+        border[3].initPathData();
         for(int i=1;i<70;i+=2){
             double lat= sangye9locat[i-1];
             double lon= sangye9locat[i];
-            sangye9.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[3].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye9.endPathData();
+        border[3].endPathData();
 
         //노원구 상계10동 - 5
-        NMapPathData sangye10=new NMapPathData(78);
-        sangye10.initPathData();
+        border[4]=new NMapPathData(78);
+        border[4].initPathData();
         for(int i=1;i<78;i+=2){
             double lat= sangye10locat[i-1];
             double lon= sangye10locat[i];
-            sangye10.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[4].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye10.endPathData();
+        border[4].endPathData();
 
         //노원구 상계5동 - 6
-        NMapPathData sangye5=new NMapPathData(56);
-        sangye5.initPathData();
+        border[5]=new NMapPathData(56);
+        border[5].initPathData();
         for(int i=1;i<56;i+=2){
             double lat= sangye5locat[i-1];
             double lon= sangye5locat[i];
-            sangye5.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[5].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye5.endPathData();
+        border[5].endPathData();
 
         //노원구 중계4동 - 7
-        NMapPathData joongye4=new NMapPathData(48);
-        joongye4.initPathData();
+        border[6]=new NMapPathData(48);
+        border[6].initPathData();
         for(int i=1;i<48;i+=2){
             double lat= joongye4locat[i-1];
             double lon=joongye4locat[i];
-            joongye4.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[6].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        joongye4.endPathData();
+        border[6].endPathData();
 
         //노원구 상계2동 - 8
-        NMapPathData sangye2=new NMapPathData(84);
-        sangye2.initPathData();
+        border[7]=new NMapPathData(84);
+        border[7].initPathData();
         for(int i=1;i<84;i+=2){
             double lat= sangye2locat[i-1];
             double lon= sangye2locat[i];
-            sangye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[7].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye2.endPathData();
+        border[7].endPathData();
 
         //노원구 상계6,7동 - 9
-        NMapPathData sangye67=new NMapPathData(108);
-        sangye67.initPathData();
+        border[8]=new NMapPathData(108);
+        border[8].initPathData();
         for(int i=1;i<108;i+=2){
             double lat= sangye67locat[i-1];
             double lon= sangye67locat[i];
-            sangye67.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[8].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        sangye67.endPathData();
+        border[8].endPathData();
 
         //노원구 중계1동 - 10
-        NMapPathData joongye1=new NMapPathData(70);
-        joongye1.initPathData();
+        border[9]=new NMapPathData(70);
+        border[9].initPathData();
         for(int i=1;i<70;i+=2){
             double lat= joongye1locat[i-1];
             double lon=joongye1locat[i];
-            joongye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[9].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        joongye1.endPathData();
+        border[9].endPathData();
 
         //노원구 중계본동 - 11
-        NMapPathData joongyebon=new NMapPathData(112);
-        joongyebon.initPathData();
+        border[10]=new NMapPathData(112);
+        border[10].initPathData();
         for(int i=1;i<112;i+=2){
             double lat= joongyebonlocat[i-1];
             double lon=joongyebonlocat[i];
-            joongyebon.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[10].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        joongyebon.endPathData();
+        border[10].endPathData();
 
         //노원구 중계2,3동 - 12
-        NMapPathData joongye23=new NMapPathData(54);
-        joongye23.initPathData();
+        border[11]=new NMapPathData(54);
+        border[11].initPathData();
         for(int i=1;i<54;i+=2){
             double lat= joongye23locat[i-1];
             double lon=joongye23locat[i];
-            joongye23.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[11].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        joongye23.endPathData();
+        border[11].endPathData();
 
         //노원구 하계1동 - 13
-        NMapPathData hagye1=new NMapPathData(64);
-        hagye1.initPathData();
+        border[12]=new NMapPathData(64);
+        border[12].initPathData();
         for(int i=1;i<64;i+=2){
             double lat= hagye1locat[i-1];
             double lon=hagye1locat[i];
-            hagye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[12].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        hagye1.endPathData();
+        border[12].endPathData();
 
         //노원구 월계2동 - 14
-        NMapPathData wolgye2=new NMapPathData(78);
-        wolgye2.initPathData();
+        border[13]=new NMapPathData(78);
+        border[13].initPathData();
         for(int i=1;i<78;i+=2){
             double lat= wolgye2locat[i-1];
             double lon= wolgye2locat[i];
-            wolgye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[13].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        wolgye2.endPathData();
+        border[13].endPathData();
 
         //노원구 하계2동 - 15
-        NMapPathData hagye2=new NMapPathData(42);
-        hagye2.initPathData();
+        border[14]=new NMapPathData(42);
+        border[14].initPathData();
         for(int i=1;i<42;i+=2){
             double lat= hagye2locat[i-1];
             double lon=hagye2locat[i];
-            hagye2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[14].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        hagye2.endPathData();
+        border[14].endPathData();
 
         //노원구 공릉2동 - 16
-        NMapPathData gongreung2=new NMapPathData(306);
-        gongreung2.initPathData();
+        border[15]=new NMapPathData(306);
+        border[15].initPathData();
         for(int i=1;i<306;i+=2){
             double lat= gongreung2locat[i-1];
             double lon=gongreung2locat[i];
-            gongreung2.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[15].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        gongreung2.endPathData();
+        border[15].endPathData();
 
         //노원구 월계1동 - 17
-        NMapPathData wolgye1=new NMapPathData(98);
-        wolgye1.initPathData();
+        border[16]=new NMapPathData(98);
+        border[16].initPathData();
         for(int i=1;i<98;i+=2){
             double lat= wolgye1locat[i-1];
             double lon= wolgye1locat[i];
-            wolgye1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[16].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        wolgye1.endPathData();
+        border[16].endPathData();
 
         //노원구 월계3동 - 18
-        NMapPathData wolgye3=new NMapPathData(110);
-        wolgye3.initPathData();
+        border[17]=new NMapPathData(110);
+        border[17].initPathData();
         for(int i=1;i<110;i+=2){
             double lat= wolgye3locat[i-1];
             double lon= wolgye3locat[i];
-            wolgye3.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[17].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        wolgye3.endPathData();
+        border[17].endPathData();
 
         //노원구 공릉1동 -19
-        NMapPathData gongreung1=new NMapPathData(138);
-        gongreung1.initPathData();
+        border[18]=new NMapPathData(138);
+        border[18].initPathData();
         for(int i=1;i<138;i+=2){
             double lat= gongreung1locat[i-1];
             double lon=gongreung1locat[i];
-            gongreung1.addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
+            border[18].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        gongreung1.endPathData();
+        border[18].endPathData();
 
         ///////////////////////////월계 1동 상세히 (차례로 20~60)////////////////////////////////
-        NMapPathData nemo1=new NMapPathData(4);
-        nemo1.initPathData();
-        nemo1.addPathPoint(127.050056, 37.624471,NMapPathLineStyle.TYPE_DASH);
-        nemo1.addPathPoint(127.052058, 37.625724,NMapPathLineStyle.TYPE_DASH);
-        nemo1.addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
-        nemo1.addPathPoint(127.051246, 37.623123,NMapPathLineStyle.TYPE_DASH);
-        nemo1.endPathData();
+        border[19]=new NMapPathData(4);
+        border[19].initPathData();
+        border[19].addPathPoint(127.050056, 37.624471,NMapPathLineStyle.TYPE_DASH);
+        border[19].addPathPoint(127.052058, 37.625724,NMapPathLineStyle.TYPE_DASH);
+        border[19].addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
+        border[19].addPathPoint(127.051246, 37.623123,NMapPathLineStyle.TYPE_DASH);
+        border[19].endPathData();
 
-        NMapPathData nemo2=new NMapPathData(4);
-        nemo2.initPathData();
-        nemo2.addPathPoint(127.052058, 37.625724,NMapPathLineStyle.TYPE_DASH);
-        nemo2.addPathPoint(127.054154, 37.627013, NMapPathLineStyle.TYPE_DASH);
-        nemo2.addPathPoint(127.054764,37.626024, NMapPathLineStyle.TYPE_DASH);
-        nemo2.addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
-        nemo2.endPathData();
+        border[20]=new NMapPathData(4);
+        border[20].initPathData();
+        border[20].addPathPoint(127.052058, 37.625724,NMapPathLineStyle.TYPE_DASH);
+        border[20].addPathPoint(127.054154, 37.627013, NMapPathLineStyle.TYPE_DASH);
+        border[20].addPathPoint(127.054764,37.626024, NMapPathLineStyle.TYPE_DASH);
+        border[20].addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
+        border[20].endPathData();
 
-        NMapPathData nemo3=new NMapPathData(4);
-        nemo3.initPathData();
-        nemo3.addPathPoint(127.054154, 37.627013,NMapPathLineStyle.TYPE_DASH);
-        nemo3.addPathPoint(127.056521, 37.628479,NMapPathLineStyle.TYPE_DASH);
-        nemo3.addPathPoint(127.057309, 37.627482,NMapPathLineStyle.TYPE_DASH);
-        nemo3.addPathPoint(127.054764,37.626024,NMapPathLineStyle.TYPE_DASH);
-        nemo3.endPathData();
+        border[21]=new NMapPathData(4);
+        border[21].initPathData();
+        border[21].addPathPoint(127.054154, 37.627013,NMapPathLineStyle.TYPE_DASH);
+        border[21].addPathPoint(127.056521, 37.628479,NMapPathLineStyle.TYPE_DASH);
+        border[21].addPathPoint(127.057309, 37.627482,NMapPathLineStyle.TYPE_DASH);
+        border[21].addPathPoint(127.054764,37.626024,NMapPathLineStyle.TYPE_DASH);
+        border[21].endPathData();
 
-        NMapPathData nemo4=new NMapPathData(4);
-        nemo4.initPathData();
-        nemo4.addPathPoint(127.056521, 37.628479, NMapPathLineStyle.TYPE_DASH);
-        nemo4.addPathPoint(127.058896,37.630046,NMapPathLineStyle.TYPE_DASH);
-        nemo4.addPathPoint(127.059311,37.629182,NMapPathLineStyle.TYPE_DASH);
-        nemo4.addPathPoint(127.057309,37.627482,NMapPathLineStyle.TYPE_DASH);
-        nemo4.endPathData();
+        border[22]=new NMapPathData(4);
+        border[22].initPathData();
+        border[22].addPathPoint(127.056521, 37.628479, NMapPathLineStyle.TYPE_DASH);
+        border[22].addPathPoint(127.058896,37.630046,NMapPathLineStyle.TYPE_DASH);
+        border[22].addPathPoint(127.059311,37.629182,NMapPathLineStyle.TYPE_DASH);
+        border[22].addPathPoint(127.057309,37.627482,NMapPathLineStyle.TYPE_DASH);
+        border[22].endPathData();
 
-        NMapPathData nemo5=new NMapPathData(4);
-        nemo5.initPathData();
-        nemo5.addPathPoint(127.051246, 37.623123,NMapPathLineStyle.TYPE_DASH);
-        nemo5.addPathPoint(127.053068,37.624581,NMapPathLineStyle.TYPE_DASH);
-        nemo5.addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
-        nemo5.addPathPoint(127.052760, 37.621522,NMapPathLineStyle.TYPE_DASH);
-        nemo5.endPathData();
+        border[23]=new NMapPathData(4);
+        border[23].initPathData();
+        border[23].addPathPoint(127.051246, 37.623123,NMapPathLineStyle.TYPE_DASH);
+        border[23].addPathPoint(127.053068,37.624581,NMapPathLineStyle.TYPE_DASH);
+        border[23].addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
+        border[23].addPathPoint(127.052760, 37.621522,NMapPathLineStyle.TYPE_DASH);
+        border[23].endPathData();
 
-        NMapPathData nemo6=new NMapPathData(4);
-        nemo6.initPathData();
-        nemo6.addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
-        nemo6.addPathPoint(127.054764, 37.626024,NMapPathLineStyle.TYPE_DASH);
-        nemo6.addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
-        nemo6.addPathPoint(127.054647,37.623069,NMapPathLineStyle.TYPE_DASH);
-        nemo6.endPathData();
+        border[24]=new NMapPathData(4);
+        border[24].initPathData();
+        border[24].addPathPoint(127.053068, 37.624581,NMapPathLineStyle.TYPE_DASH);
+        border[24].addPathPoint(127.054764, 37.626024,NMapPathLineStyle.TYPE_DASH);
+        border[24].addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
+        border[24].addPathPoint(127.054647,37.623069,NMapPathLineStyle.TYPE_DASH);
+        border[24].endPathData();
 
-        NMapPathData nemo7=new NMapPathData(4);
-        nemo7.initPathData();
-        nemo7.addPathPoint(127.054764, 37.626024,NMapPathLineStyle.TYPE_DASH);
-        nemo7.addPathPoint(127.057309, 37.627482,NMapPathLineStyle.TYPE_DASH);
-        nemo7.addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
-        nemo7.addPathPoint(127.056241, 37.624461,NMapPathLineStyle.TYPE_DASH);
-        nemo7.endPathData();
+        border[25]=new NMapPathData(4);
+        border[25].initPathData();
+        border[25].addPathPoint(127.054764, 37.626024,NMapPathLineStyle.TYPE_DASH);
+        border[25].addPathPoint(127.057309, 37.627482,NMapPathLineStyle.TYPE_DASH);
+        border[25].addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
+        border[25].addPathPoint(127.056241, 37.624461,NMapPathLineStyle.TYPE_DASH);
+        border[25].endPathData();
 
-        NMapPathData nemo8=new NMapPathData(4);
-        nemo8.initPathData();
-        nemo8.addPathPoint(127.057309,37.627482,NMapPathLineStyle.TYPE_DASH);
-        nemo8.addPathPoint(127.059311, 37.629182,NMapPathLineStyle.TYPE_DASH);
-        nemo8.addPathPoint(127.060351, 37.626987,NMapPathLineStyle.TYPE_DASH);
-        nemo8.addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
-        nemo8.endPathData();
+        border[26]=new NMapPathData(4);
+        border[26].initPathData();
+        border[26].addPathPoint(127.057309,37.627482,NMapPathLineStyle.TYPE_DASH);
+        border[26].addPathPoint(127.059311, 37.629182,NMapPathLineStyle.TYPE_DASH);
+        border[26].addPathPoint(127.060351, 37.626987,NMapPathLineStyle.TYPE_DASH);
+        border[26].addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
+        border[26].endPathData();
 
-        NMapPathData nemo9=new NMapPathData(4);
-        nemo9.initPathData();
-        nemo9.addPathPoint(127.052760,37.621522,NMapPathLineStyle.TYPE_DASH);
-        nemo9.addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
-        nemo9.addPathPoint(127.055891, 37.622035,NMapPathLineStyle.TYPE_DASH);
-        nemo9.addPathPoint(127.053493, 37.620665,NMapPathLineStyle.TYPE_DASH);
-        nemo9.endPathData();
+        border[27]=new NMapPathData(4);
+        border[27].initPathData();
+        border[27].addPathPoint(127.052760,37.621522,NMapPathLineStyle.TYPE_DASH);
+        border[27].addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
+        border[27].addPathPoint(127.055891, 37.622035,NMapPathLineStyle.TYPE_DASH);
+        border[27].addPathPoint(127.053493, 37.620665,NMapPathLineStyle.TYPE_DASH);
+        border[27].endPathData();
 
-        NMapPathData nemo10=new NMapPathData(4);
-        nemo10.initPathData();
-        nemo10.addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
-        nemo10.addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
-        nemo10.addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
-        nemo10.addPathPoint(127.055891, 37.622035,NMapPathLineStyle.TYPE_DASH);
-        nemo10.endPathData();
+        border[28]=new NMapPathData(4);
+        border[28].initPathData();
+        border[28].addPathPoint(127.054647, 37.623069,NMapPathLineStyle.TYPE_DASH);
+        border[28].addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
+        border[28].addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
+        border[28].addPathPoint(127.055891, 37.622035,NMapPathLineStyle.TYPE_DASH);
+        border[28].endPathData();
 
-        NMapPathData nemo11=new NMapPathData(4);
-        nemo11.initPathData();
-        nemo11.addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
-        nemo11.addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
-        nemo11.addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
-        nemo11.addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
-        nemo11.endPathData();
+        border[29]=new NMapPathData(4);
+        border[29].initPathData();
+        border[29].addPathPoint(127.056241,37.624461,NMapPathLineStyle.TYPE_DASH);
+        border[29].addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
+        border[29].addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
+        border[29].addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
+        border[29].endPathData();
 
-        NMapPathData nemo12=new NMapPathData(4);
-        nemo12.initPathData();
-        nemo12.addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
-        nemo12.addPathPoint(127.060351,37.626987,NMapPathLineStyle.TYPE_DASH);
-        nemo12.addPathPoint(127.060905,37.625920,NMapPathLineStyle.TYPE_DASH);
-        nemo12.addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
-        nemo12.endPathData();
+        border[30]=new NMapPathData(4);
+        border[30].initPathData();
+        border[30].addPathPoint(127.058108,37.625923,NMapPathLineStyle.TYPE_DASH);
+        border[30].addPathPoint(127.060351,37.626987,NMapPathLineStyle.TYPE_DASH);
+        border[30].addPathPoint(127.060905,37.625920,NMapPathLineStyle.TYPE_DASH);
+        border[30].addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
+        border[30].endPathData();
 
-        NMapPathData nemo13=new NMapPathData(4);
-        nemo13.initPathData();
-        nemo13.addPathPoint(127.053493,37.620665,NMapPathLineStyle.TYPE_DASH);
-        nemo13.addPathPoint(127.055891,37.622035,NMapPathLineStyle.TYPE_DASH);
-        nemo13.addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
-        nemo13.addPathPoint(127.055360,37.619279,NMapPathLineStyle.TYPE_DASH);
-        nemo13.endPathData();
+        border[31]=new NMapPathData(4);
+        border[31].initPathData();
+        border[31].addPathPoint(127.053493,37.620665,NMapPathLineStyle.TYPE_DASH);
+        border[31].addPathPoint(127.055891,37.622035,NMapPathLineStyle.TYPE_DASH);
+        border[31].addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
+        border[31].addPathPoint(127.055360,37.619279,NMapPathLineStyle.TYPE_DASH);
+        border[31].endPathData();
 
-        NMapPathData nemo14=new NMapPathData(4);
-        nemo14.initPathData();
-        nemo14.addPathPoint(127.055891,37.622035,NMapPathLineStyle.TYPE_DASH);
-        nemo14.addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
-        nemo14.addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
-        nemo14.addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
-        nemo14.endPathData();
+        border[32]=new NMapPathData(4);
+        border[32].initPathData();
+        border[32].addPathPoint(127.055891,37.622035,NMapPathLineStyle.TYPE_DASH);
+        border[32].addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
+        border[32].addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
+        border[32].addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
+        border[32].endPathData();
 
-        NMapPathData nemo15=new NMapPathData(4);
-        nemo15.initPathData();
-        nemo15.addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
-        nemo15.addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
-        nemo15.addPathPoint(127.060159,37.623209,NMapPathLineStyle.TYPE_DASH);
-        nemo15.addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
-        nemo15.endPathData();
+        border[33]=new NMapPathData(4);
+        border[33].initPathData();
+        border[33].addPathPoint(127.057336,37.623237,NMapPathLineStyle.TYPE_DASH);
+        border[33].addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
+        border[33].addPathPoint(127.060159,37.623209,NMapPathLineStyle.TYPE_DASH);
+        border[33].addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
+        border[33].endPathData();
 
-        NMapPathData nemo16=new NMapPathData(4);
-        nemo16.initPathData();
-        nemo16.addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
-        nemo16.addPathPoint(127.060905,37.625920,NMapPathLineStyle.TYPE_DASH);
-        nemo16.addPathPoint(127.061613,37.624642,NMapPathLineStyle.TYPE_DASH);
-        nemo16.addPathPoint(127.060159,37.623209,NMapPathLineStyle.TYPE_DASH);
-        nemo16.endPathData();
+        border[34]=new NMapPathData(4);
+        border[34].initPathData();
+        border[34].addPathPoint(127.059381,37.624612,NMapPathLineStyle.TYPE_DASH);
+        border[34].addPathPoint(127.060905,37.625920,NMapPathLineStyle.TYPE_DASH);
+        border[34].addPathPoint(127.061613,37.624642,NMapPathLineStyle.TYPE_DASH);
+        border[34].addPathPoint(127.060159,37.623209,NMapPathLineStyle.TYPE_DASH);
+        border[34].endPathData();
 
-        NMapPathData nemo17=new NMapPathData(4);
-        nemo17.initPathData();
-        nemo17.addPathPoint(127.055360,37.619279,NMapPathLineStyle.TYPE_DASH);
-        nemo17.addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
-        nemo17.addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
-        nemo17.addPathPoint(127.056623,37.618335,NMapPathLineStyle.TYPE_DASH);
-        nemo17.endPathData();
+        border[35]=new NMapPathData(4);
+        border[35].initPathData();
+        border[35].addPathPoint(127.055360,37.619279,NMapPathLineStyle.TYPE_DASH);
+        border[35].addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
+        border[35].addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
+        border[35].addPathPoint(127.056623,37.618335,NMapPathLineStyle.TYPE_DASH);
+        border[35].endPathData();
 
-        NMapPathData nemo18=new NMapPathData(4);
-        nemo18.initPathData();
-        nemo18.addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
-        nemo18.addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
-        nemo18.addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
-        nemo18.addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
-        nemo18.endPathData();
+        border[36]=new NMapPathData(4);
+        border[36].initPathData();
+        border[36].addPathPoint(127.057651,37.620865,NMapPathLineStyle.TYPE_DASH);
+        border[36].addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
+        border[36].addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
+        border[36].addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
+        border[36].endPathData();
 
-        NMapPathData nemo19=new NMapPathData(4);
-        nemo19.initPathData();
-        nemo19.addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
-        nemo19.addPathPoint(127.061613,37.624642,NMapPathLineStyle.TYPE_DASH);
-        nemo19.addPathPoint(127.062150,37.623469,NMapPathLineStyle.TYPE_DASH);
-        nemo19.addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
-        nemo19.endPathData();
+        border[37]=new NMapPathData(4);
+        border[37].initPathData();
+        border[37].addPathPoint(127.059221,37.622323,NMapPathLineStyle.TYPE_DASH);
+        border[37].addPathPoint(127.061613,37.624642,NMapPathLineStyle.TYPE_DASH);
+        border[37].addPathPoint(127.062150,37.623469,NMapPathLineStyle.TYPE_DASH);
+        border[37].addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
+        border[37].endPathData();
 
-        NMapPathData nemo20=new NMapPathData(4);
-        nemo20.initPathData();
-        nemo20.addPathPoint(127.056623,37.618335,NMapPathLineStyle.TYPE_DASH);
-        nemo20.addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
-        nemo20.addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
-        nemo20.addPathPoint(127.057363,37.617635,NMapPathLineStyle.TYPE_DASH);
-        nemo20.endPathData();
+        border[38]=new NMapPathData(4);
+        border[38].initPathData();
+        border[38].addPathPoint(127.056623,37.618335,NMapPathLineStyle.TYPE_DASH);
+        border[38].addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
+        border[38].addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
+        border[38].addPathPoint(127.057363,37.617635,NMapPathLineStyle.TYPE_DASH);
+        border[38].endPathData();
 
-        NMapPathData nemo21=new NMapPathData(4);
-        nemo21.initPathData();
-        nemo21.addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
-        nemo21.addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
-        nemo21.addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
-        nemo21.addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
-        nemo21.endPathData();
+        border[39]=new NMapPathData(4);
+        border[39].initPathData();
+        border[39].addPathPoint(127.058409,37.620179,NMapPathLineStyle.TYPE_DASH);
+        border[39].addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
+        border[39].addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
+        border[39].addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
+        border[39].endPathData();
 
-        NMapPathData nemo22=new NMapPathData(4);
-        nemo22.initPathData();
-        nemo22.addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
-        nemo22.addPathPoint(127.062150,37.623469,NMapPathLineStyle.TYPE_DASH);
-        nemo22.addPathPoint(127.062541,37.622552,NMapPathLineStyle.TYPE_DASH);
-        nemo22.addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
-        nemo22.endPathData();
+        border[40]=new NMapPathData(4);
+        border[40].initPathData();
+        border[40].addPathPoint(127.060105,37.621823,NMapPathLineStyle.TYPE_DASH);
+        border[40].addPathPoint(127.062150,37.623469,NMapPathLineStyle.TYPE_DASH);
+        border[40].addPathPoint(127.062541,37.622552,NMapPathLineStyle.TYPE_DASH);
+        border[40].addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
+        border[40].endPathData();
 
-        NMapPathData nemo23=new NMapPathData(4);
-        nemo23.initPathData();
-        nemo23.addPathPoint(127.057363,37.617635,NMapPathLineStyle.TYPE_DASH);
-        nemo23.addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
-        nemo23.addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
-        nemo23.addPathPoint(127.058175,37.617063,NMapPathLineStyle.TYPE_DASH);//7-1
-        nemo23.endPathData();
+        border[41]=new NMapPathData(4);
+        border[41].initPathData();
+        border[41].addPathPoint(127.057363,37.617635,NMapPathLineStyle.TYPE_DASH);
+        border[41].addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
+        border[41].addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
+        border[41].addPathPoint(127.058175,37.617063,NMapPathLineStyle.TYPE_DASH);//7-1
+        border[41].endPathData();
 
-        NMapPathData nemo24=new NMapPathData(4);
-        nemo24.initPathData();
-        nemo24.addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
-        nemo24.addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
-        nemo24.addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
-        nemo24.addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
-        nemo24.endPathData();
+        border[42]=new NMapPathData(4);
+        border[42].initPathData();
+        border[42].addPathPoint(127.059329,37.619164,NMapPathLineStyle.TYPE_DASH);
+        border[42].addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
+        border[42].addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
+        border[42].addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
+        border[42].endPathData();
 
-        NMapPathData nemo25=new NMapPathData(4);
-        nemo25.initPathData();
-        nemo25.addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
-        nemo25.addPathPoint(127.062541,37.622552,NMapPathLineStyle.TYPE_DASH);
-        nemo25.addPathPoint(127.063201,37.621446,NMapPathLineStyle.TYPE_DASH);
-        nemo25.addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
-        nemo25.endPathData();
+        border[43]=new NMapPathData(4);
+        border[43].initPathData();
+        border[43].addPathPoint(127.060647,37.620779,NMapPathLineStyle.TYPE_DASH);
+        border[43].addPathPoint(127.062541,37.622552,NMapPathLineStyle.TYPE_DASH);
+        border[43].addPathPoint(127.063201,37.621446,NMapPathLineStyle.TYPE_DASH);
+        border[43].addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
+        border[43].endPathData();
 
-        NMapPathData nemo26=new NMapPathData(4);
-        nemo26.initPathData();
-        nemo26.addPathPoint(127.058175,37.617063,NMapPathLineStyle.TYPE_DASH);
-        nemo26.addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
-        nemo26.addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
-        nemo26.addPathPoint(127.059384,37.616477,NMapPathLineStyle.TYPE_DASH);
-        nemo26.endPathData();
+        border[44]=new NMapPathData(4);
+        border[44].initPathData();
+        border[44].addPathPoint(127.058175,37.617063,NMapPathLineStyle.TYPE_DASH);
+        border[44].addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
+        border[44].addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
+        border[44].addPathPoint(127.059384,37.616477,NMapPathLineStyle.TYPE_DASH);
+        border[44].endPathData();
 
-        NMapPathData nemo27=new NMapPathData(4);
-        nemo27.initPathData();
-        nemo27.addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
-        nemo27.addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
-        nemo27.addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
-        nemo27.addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
-        nemo27.endPathData();
+        border[45]=new NMapPathData(4);
+        border[45].initPathData();
+        border[45].addPathPoint(127.059961,37.618464,NMapPathLineStyle.TYPE_DASH);
+        border[45].addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
+        border[45].addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
+        border[45].addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
+        border[45].endPathData();
 
-        NMapPathData nemo28=new NMapPathData(4);
-        nemo28.initPathData();
-        nemo28.addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
-        nemo28.addPathPoint(127.063201,37.621446,NMapPathLineStyle.TYPE_DASH);
-        nemo28.addPathPoint(127.063673,37.620546,NMapPathLineStyle.TYPE_DASH);
-        nemo28.addPathPoint(127.061820, 37.618921,NMapPathLineStyle.TYPE_DASH);
-        nemo28.endPathData();
+        border[46]=new NMapPathData(4);
+        border[46].initPathData();
+        border[46].addPathPoint(127.061296,37.619679,NMapPathLineStyle.TYPE_DASH);
+        border[46].addPathPoint(127.063201,37.621446,NMapPathLineStyle.TYPE_DASH);
+        border[46].addPathPoint(127.063673,37.620546,NMapPathLineStyle.TYPE_DASH);
+        border[46].addPathPoint(127.061820, 37.618921,NMapPathLineStyle.TYPE_DASH);
+        border[46].endPathData();
 
-        NMapPathData nemo29=new NMapPathData(4);
-        nemo29.initPathData();
-        nemo29.addPathPoint(127.059384, 37.616477,NMapPathLineStyle.TYPE_DASH);
-        nemo29.addPathPoint(127.060683, 37.617749,NMapPathLineStyle.TYPE_DASH);
-        nemo29.addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
-        nemo29.addPathPoint(127.060142,37.615977,NMapPathLineStyle.TYPE_DASH);
-        nemo29.endPathData();
+        border[47]=new NMapPathData(4);
+        border[47].initPathData();
+        border[47].addPathPoint(127.059384, 37.616477,NMapPathLineStyle.TYPE_DASH);
+        border[47].addPathPoint(127.060683, 37.617749,NMapPathLineStyle.TYPE_DASH);
+        border[47].addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
+        border[47].addPathPoint(127.060142,37.615977,NMapPathLineStyle.TYPE_DASH);
+        border[47].endPathData();
 
-        NMapPathData nemo30=new NMapPathData(4);
-        nemo30.initPathData();
-        nemo30.addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
-        nemo30.addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
-        nemo30.addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
-        nemo30.addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
-        nemo30.endPathData();
+        border[48]=new NMapPathData(4);
+        border[48].initPathData();
+        border[48].addPathPoint(127.060683,37.617749,NMapPathLineStyle.TYPE_DASH);
+        border[48].addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
+        border[48].addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
+        border[48].addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
+        border[48].endPathData();
 
-        NMapPathData nemo31=new NMapPathData(4);
-        nemo31.initPathData();
-        nemo31.addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
-        nemo31.addPathPoint(127.063673,37.620546,NMapPathLineStyle.TYPE_DASH);
-        nemo31.addPathPoint(127.063995,37.619526,NMapPathLineStyle.TYPE_DASH);
-        nemo31.addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
-        nemo31.endPathData();
+        border[49]=new NMapPathData(4);
+        border[49].initPathData();
+        border[49].addPathPoint(127.061820,37.618921,NMapPathLineStyle.TYPE_DASH);
+        border[49].addPathPoint(127.063673,37.620546,NMapPathLineStyle.TYPE_DASH);
+        border[49].addPathPoint(127.063995,37.619526,NMapPathLineStyle.TYPE_DASH);
+        border[49].addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
+        border[49].endPathData();
 
-        NMapPathData nemo32=new NMapPathData(4);
-        nemo32.initPathData();
-        nemo32.addPathPoint(127.060142,37.615977,NMapPathLineStyle.TYPE_DASH);
-        nemo32.addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
-        nemo32.addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
-        nemo32.addPathPoint(127.060863,37.615620,NMapPathLineStyle.TYPE_DASH);
-        nemo32.endPathData();
+        border[50]=new NMapPathData(4);
+        border[50].initPathData();
+        border[50].addPathPoint(127.060142,37.615977,NMapPathLineStyle.TYPE_DASH);
+        border[50].addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
+        border[50].addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
+        border[50].addPathPoint(127.060863,37.615620,NMapPathLineStyle.TYPE_DASH);
+        border[50].endPathData();
 
-        NMapPathData nemo33=new NMapPathData(4);
-        nemo33.initPathData();
-        nemo33.addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
-        nemo33.addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
-        nemo33.addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
-        nemo33.addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
-        nemo33.endPathData();
+        border[51]=new NMapPathData(4);
+        border[51].initPathData();
+        border[51].addPathPoint(127.061314,37.617249,NMapPathLineStyle.TYPE_DASH);
+        border[51].addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
+        border[51].addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
+        border[51].addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
+        border[51].endPathData();
 
-        NMapPathData nemo34=new NMapPathData(4);
-        nemo34.initPathData();
-        nemo34.addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
-        nemo34.addPathPoint(127.063995,37.619526,NMapPathLineStyle.TYPE_DASH);
-        nemo34.addPathPoint(127.064312,37.618640,NMapPathLineStyle.TYPE_DASH);
-        nemo34.addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
-        nemo34.endPathData();
+        border[52]=new NMapPathData(4);
+        border[52].initPathData();
+        border[52].addPathPoint(127.062451,37.618350,NMapPathLineStyle.TYPE_DASH);
+        border[52].addPathPoint(127.063995,37.619526,NMapPathLineStyle.TYPE_DASH);
+        border[52].addPathPoint(127.064312,37.618640,NMapPathLineStyle.TYPE_DASH);
+        border[52].addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
+        border[52].endPathData();
 
-        NMapPathData nemo35=new NMapPathData(4);
-        nemo35.initPathData();
-        nemo35.addPathPoint(127.060863,37.615620,NMapPathLineStyle.TYPE_DASH);
-        nemo35.addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
-        nemo35.addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
-        nemo35.addPathPoint(127.061278,37.614891,NMapPathLineStyle.TYPE_DASH);
-        nemo35.endPathData();
+        border[53]=new NMapPathData(4);
+        border[53].initPathData();
+        border[53].addPathPoint(127.060863,37.615620,NMapPathLineStyle.TYPE_DASH);
+        border[53].addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
+        border[53].addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
+        border[53].addPathPoint(127.061278,37.614891,NMapPathLineStyle.TYPE_DASH);
+        border[53].endPathData();
 
-        NMapPathData nemo36=new NMapPathData(4);
-        nemo36.initPathData();
-        nemo36.addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
-        nemo36.addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
-        nemo36.addPathPoint(127.064039,37.616863,NMapPathLineStyle.TYPE_DASH);
-        nemo36.addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
-        nemo36.endPathData();
+        border[54]=new NMapPathData(4);
+        border[54].initPathData();
+        border[54].addPathPoint(127.061946,37.616606,NMapPathLineStyle.TYPE_DASH);
+        border[54].addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
+        border[54].addPathPoint(127.064039,37.616863,NMapPathLineStyle.TYPE_DASH);
+        border[54].addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
+        border[54].endPathData();
 
-        NMapPathData nemo37=new NMapPathData(4);
-        nemo37.initPathData();
-        nemo37.addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
-        nemo37.addPathPoint(127.064312,37.618640,NMapPathLineStyle.TYPE_DASH);
-        nemo37.addPathPoint(127.064763,37.617568,NMapPathLineStyle.TYPE_DASH);
-        nemo37.addPathPoint(127.064039,37.616863,NMapPathLineStyle.TYPE_DASH);
-        nemo37.endPathData();
+        border[55]=new NMapPathData(4);
+        border[55].initPathData();
+        border[55].addPathPoint(127.063065,37.617506,NMapPathLineStyle.TYPE_DASH);
+        border[55].addPathPoint(127.064312,37.618640,NMapPathLineStyle.TYPE_DASH);
+        border[55].addPathPoint(127.064763,37.617568,NMapPathLineStyle.TYPE_DASH);
+        border[55].addPathPoint(127.064039,37.616863,NMapPathLineStyle.TYPE_DASH);
+        border[55].endPathData();
 
-        NMapPathData nemo38=new NMapPathData(4);
-        nemo38.initPathData();
-        nemo38.addPathPoint(127.061278,37.614891,NMapPathLineStyle.TYPE_DASH);
-        nemo38.addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
-        nemo38.addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
-        nemo38.addPathPoint(127.061856,37.614433,NMapPathLineStyle.TYPE_DASH);
-        nemo38.endPathData();
+        border[56]=new NMapPathData(4);
+        border[56].initPathData();
+        border[56].addPathPoint(127.061278,37.614891,NMapPathLineStyle.TYPE_DASH);
+        border[56].addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
+        border[56].addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
+        border[56].addPathPoint(127.061856,37.614433,NMapPathLineStyle.TYPE_DASH);
+        border[56].endPathData();
 
-        NMapPathData nemo39=new NMapPathData(4);
-        nemo39.initPathData();
-        nemo39.addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
-        nemo39.addPathPoint(127.064763,37.617568,NMapPathLineStyle.TYPE_DASH);
-        nemo39.addPathPoint(127.065034,37.616725,NMapPathLineStyle.TYPE_DASH);
-        nemo39.addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
-        nemo39.endPathData();
+        border[57]=new NMapPathData(4);
+        border[57].initPathData();
+        border[57].addPathPoint(127.062686,37.615891,NMapPathLineStyle.TYPE_DASH);
+        border[57].addPathPoint(127.064763,37.617568,NMapPathLineStyle.TYPE_DASH);
+        border[57].addPathPoint(127.065034,37.616725,NMapPathLineStyle.TYPE_DASH);
+        border[57].addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
+        border[57].endPathData();
 
-        NMapPathData nemo40=new NMapPathData(4);
-        nemo40.initPathData();
-        nemo40.addPathPoint(127.061856,37.614433,NMapPathLineStyle.TYPE_DASH);
-        nemo40.addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
-        nemo40.addPathPoint(127.064039,37.614762,NMapPathLineStyle.TYPE_DASH);
-        nemo40.addPathPoint(127.062975,37.614141,NMapPathLineStyle.TYPE_DASH);
-        nemo40.endPathData();
+        border[58]=new NMapPathData(4);
+        border[58].initPathData();
+        border[58].addPathPoint(127.061856,37.614433,NMapPathLineStyle.TYPE_DASH);
+        border[58].addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
+        border[58].addPathPoint(127.064039,37.614762,NMapPathLineStyle.TYPE_DASH);
+        border[58].addPathPoint(127.062975,37.614141,NMapPathLineStyle.TYPE_DASH);
+        border[58].endPathData();
 
-        NMapPathData nemo41=new NMapPathData(4);
-        nemo41.initPathData();
-        nemo41.addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
-        nemo41.addPathPoint(127.065034,37.616725,NMapPathLineStyle.TYPE_DASH);
-        nemo41.addPathPoint(127.065431,37.615696,NMapPathLineStyle.TYPE_DASH);
-        nemo41.addPathPoint(127.064039,37.614762,NMapPathLineStyle.TYPE_DASH);
-        nemo41.endPathData();
+        border[59]=new NMapPathData(4);
+        border[59].initPathData();
+        border[59].addPathPoint(127.063570,37.615377,NMapPathLineStyle.TYPE_DASH);
+        border[59].addPathPoint(127.065034,37.616725,NMapPathLineStyle.TYPE_DASH);
+        border[59].addPathPoint(127.065431,37.615696,NMapPathLineStyle.TYPE_DASH);
+        border[59].addPathPoint(127.064039,37.614762,NMapPathLineStyle.TYPE_DASH);
+        border[59].endPathData();
 
-        NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(wolgye1);
+        NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(border[0]);
         if (pathDataOverlay != null) {
+            //경계 폴리곤 생성
+            NMapPathLineStyle[] borderPolygon=new NMapPathLineStyle[60];
 
-            ////////////////////////////월계1동 세세하게 경계나누기////////////////////////////////
-            pathDataOverlay.addPathData(nemo1);
-            NMapPathLineStyle nemo1Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo1Polygon.setLineColor(0x000000, 0xaa);
-            nemo1Polygon.setFillColor(0x99FF99, 0x55);
-            nemo1.setPathLineStyle(nemo1Polygon);
-
-            pathDataOverlay.addPathData(nemo2);
-            NMapPathLineStyle nemo2Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo2Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo2Polygon.setLineColor(0x000000, 0xaa);
-            nemo2Polygon.setFillColor(0x99FF99, 0x55);
-            nemo2.setPathLineStyle(nemo2Polygon);
-
-            pathDataOverlay.addPathData(nemo3);
-            NMapPathLineStyle nemo3Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo3Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo3Polygon.setLineColor(0x000000, 0xaa);
-            nemo3Polygon.setFillColor(0x99FF99, 0x55);
-            nemo3.setPathLineStyle(nemo3Polygon);
-
-            pathDataOverlay.addPathData(nemo4);
-            NMapPathLineStyle nemo4Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo4Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo4Polygon.setLineColor(0x000000, 0xaa);
-            nemo4Polygon.setFillColor(0x99FF99, 0x55);
-            nemo4.setPathLineStyle(nemo4Polygon);
-
-            pathDataOverlay.addPathData(nemo5);
-            NMapPathLineStyle nemo5Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo5Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo5Polygon.setLineColor(0x000000, 0xaa);
-            nemo5Polygon.setFillColor(0x99FF99, 0x55);
-            nemo5.setPathLineStyle(nemo5Polygon);
-
-            pathDataOverlay.addPathData(nemo6);
-            NMapPathLineStyle nemo6Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo6Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo6Polygon.setLineColor(0x000000, 0xaa);
-            nemo6Polygon.setFillColor(0x99FF99, 0x55);
-            nemo6.setPathLineStyle(nemo6Polygon);
-
-            pathDataOverlay.addPathData(nemo7);
-            NMapPathLineStyle nemo7Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo7Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo7Polygon.setLineColor(0x000000, 0xaa);
-            nemo7Polygon.setFillColor(0x99FF99, 0x55);
-            nemo7.setPathLineStyle(nemo7Polygon);
-
-            pathDataOverlay.addPathData(nemo8);
-            NMapPathLineStyle nemo8Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo8Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo8Polygon.setLineColor(0x000000, 0xaa);
-            nemo8Polygon.setFillColor(0x99FF99, 0x55);
-            nemo8.setPathLineStyle(nemo8Polygon);
-
-            pathDataOverlay.addPathData(nemo9);
-            NMapPathLineStyle nemo9Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo9Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo9Polygon.setLineColor(0x000000, 0xaa);
-            nemo9Polygon.setFillColor(0x99FF99, 0x55);
-            nemo9.setPathLineStyle(nemo9Polygon);
-
-            pathDataOverlay.addPathData(nemo10);
-            NMapPathLineStyle nemo10Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo10Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo10Polygon.setLineColor(0x000000, 0xaa);
-            nemo10Polygon.setFillColor(0x99FF99, 0x55);
-            nemo10.setPathLineStyle(nemo10Polygon);
-
-            pathDataOverlay.addPathData(nemo11);
-            NMapPathLineStyle nemo11Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo11Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo11Polygon.setLineColor(0x000000, 0xaa);
-            nemo11Polygon.setFillColor(0x99FF99, 0x55);
-            nemo11.setPathLineStyle(nemo11Polygon);
-
-            pathDataOverlay.addPathData(nemo12);
-            NMapPathLineStyle nemo12Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo12Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo12Polygon.setLineColor(0x000000, 0xaa);
-            nemo12Polygon.setFillColor(0x99FF99, 0x55);
-            nemo12.setPathLineStyle(nemo12Polygon);
-
-            pathDataOverlay.addPathData(nemo13);
-            NMapPathLineStyle nemo13Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo13Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo13Polygon.setLineColor(0x000000, 0xaa);
-            nemo13Polygon.setFillColor(0x99FF99, 0x55);
-            nemo13.setPathLineStyle(nemo13Polygon);
-
-            pathDataOverlay.addPathData(nemo14);
-            NMapPathLineStyle nemo14Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo14Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo14Polygon.setLineColor(0x000000, 0xaa);
-            nemo14Polygon.setFillColor(0x99FF99, 0x55);
-            nemo14.setPathLineStyle(nemo14Polygon);
-
-            pathDataOverlay.addPathData(nemo15);
-            NMapPathLineStyle nemo15Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo15Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo15Polygon.setLineColor(0x000000, 0xaa);
-            nemo15Polygon.setFillColor(0x99FF99, 0x55);
-            nemo15.setPathLineStyle(nemo15Polygon);
-
-            pathDataOverlay.addPathData(nemo16);
-            NMapPathLineStyle nemo16Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo16Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo16Polygon.setLineColor(0x000000, 0xaa);
-            nemo16Polygon.setFillColor(0x99FF99, 0x55);
-            nemo16.setPathLineStyle(nemo16Polygon);
-
-            pathDataOverlay.addPathData(nemo17);
-            NMapPathLineStyle nemo17Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo17Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo17Polygon.setLineColor(0x000000, 0xaa);
-            nemo17Polygon.setFillColor(0x99FF99, 0x55);
-            nemo17.setPathLineStyle(nemo17Polygon);
-
-            pathDataOverlay.addPathData(nemo18);
-            NMapPathLineStyle nemo18Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo18Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo18Polygon.setLineColor(0x000000, 0xaa);
-            nemo18Polygon.setFillColor(0x99FF99, 0x55);
-            nemo18.setPathLineStyle(nemo18Polygon);
-
-            pathDataOverlay.addPathData(nemo19);
-            NMapPathLineStyle nemo19Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo19Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo19Polygon.setLineColor(0x000000, 0xaa);
-            nemo19Polygon.setFillColor(0x99FF99, 0x55);
-            nemo19.setPathLineStyle(nemo19Polygon);
-
-            pathDataOverlay.addPathData(nemo20);
-            NMapPathLineStyle nemo20Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo20Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo20Polygon.setLineColor(0x000000, 0xaa);
-            nemo20Polygon.setFillColor(0x99FF99, 0x55);
-            nemo20.setPathLineStyle(nemo20Polygon);
-
-            pathDataOverlay.addPathData(nemo21);
-            NMapPathLineStyle nemo21Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo21Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo21Polygon.setLineColor(0x000000, 0xaa);
-            nemo21Polygon.setFillColor(0x99FF99, 0x55);
-            nemo21.setPathLineStyle(nemo21Polygon);
-
-            pathDataOverlay.addPathData(nemo22);
-            NMapPathLineStyle nemo22Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo22Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo22Polygon.setLineColor(0x000000, 0xaa);
-            nemo22Polygon.setFillColor(0x99FF99, 0x55);
-            nemo22.setPathLineStyle(nemo22Polygon);
-
-            pathDataOverlay.addPathData(nemo23);
-            NMapPathLineStyle nemo23Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo23Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo23Polygon.setLineColor(0x000000, 0xaa);
-            nemo23Polygon.setFillColor(0x99FF99, 0x55);
-            nemo23.setPathLineStyle(nemo23Polygon);
-
-            pathDataOverlay.addPathData(nemo24);
-            NMapPathLineStyle nemo24Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo24Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo24Polygon.setLineColor(0x000000, 0xaa);
-            nemo24Polygon.setFillColor(0x99FF99, 0x55);
-            nemo24.setPathLineStyle(nemo24Polygon);
-
-            pathDataOverlay.addPathData(nemo25);
-            NMapPathLineStyle nemo25Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo25Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo25Polygon.setLineColor(0x000000, 0xaa);
-            nemo25Polygon.setFillColor(0x99FF99, 0x55);
-            nemo25.setPathLineStyle(nemo25Polygon);
-
-            pathDataOverlay.addPathData(nemo26);
-            NMapPathLineStyle nemo26Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo26Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo26Polygon.setLineColor(0x000000, 0xaa);
-            nemo26Polygon.setFillColor(0x99FF99, 0x55);
-            nemo26.setPathLineStyle(nemo26Polygon);
-
-            pathDataOverlay.addPathData(nemo27);
-            NMapPathLineStyle nemo27Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo27Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo27Polygon.setLineColor(0x000000, 0xaa);
-            nemo27Polygon.setFillColor(0x99FF99, 0x55);
-            nemo27.setPathLineStyle(nemo27Polygon);
-
-            pathDataOverlay.addPathData(nemo28);
-            NMapPathLineStyle nemo28Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo28Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo28Polygon.setLineColor(0x000000, 0xaa);
-            nemo28Polygon.setFillColor(0x99FF99, 0x55);
-            nemo28.setPathLineStyle(nemo28Polygon);
-
-            pathDataOverlay.addPathData(nemo29);
-            NMapPathLineStyle nemo29Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo29Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo29Polygon.setLineColor(0x000000, 0xaa);
-            nemo29Polygon.setFillColor(0x99FF99, 0x55);
-            nemo29.setPathLineStyle(nemo29Polygon);
-
-            pathDataOverlay.addPathData(nemo30);
-            NMapPathLineStyle nemo30Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo30Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo30Polygon.setLineColor(0x000000, 0xaa);
-            nemo30Polygon.setFillColor(0x99FF99, 0x55);
-            nemo30.setPathLineStyle(nemo30Polygon);
-
-            pathDataOverlay.addPathData(nemo31);
-            NMapPathLineStyle nemo31Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo31Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo31Polygon.setLineColor(0x000000, 0xaa);
-            nemo31Polygon.setFillColor(0x99FF99, 0x55);
-            nemo31.setPathLineStyle(nemo31Polygon);
-
-            pathDataOverlay.addPathData(nemo32);
-            NMapPathLineStyle nemo32Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo32Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo32Polygon.setLineColor(0x000000, 0xaa);
-            nemo32Polygon.setFillColor(0x99FF99, 0x55);
-            nemo32.setPathLineStyle(nemo32Polygon);
-
-            pathDataOverlay.addPathData(nemo33);
-            NMapPathLineStyle nemo33Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo33Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo33Polygon.setLineColor(0x000000, 0xaa);
-            nemo33Polygon.setFillColor(0x99FF99, 0x55);
-            nemo33.setPathLineStyle(nemo33Polygon);
-
-            pathDataOverlay.addPathData(nemo34);
-            NMapPathLineStyle nemo34Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo34Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo34Polygon.setLineColor(0x000000, 0xaa);
-            nemo34Polygon.setFillColor(0x99FF99, 0x55);
-            nemo34.setPathLineStyle(nemo34Polygon);
-
-            pathDataOverlay.addPathData(nemo35);
-            NMapPathLineStyle nemo35Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo35Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo35Polygon.setLineColor(0x000000, 0xaa);
-            nemo35Polygon.setFillColor(0x99FF99, 0x55);
-            nemo35.setPathLineStyle(nemo35Polygon);
-
-            pathDataOverlay.addPathData(nemo36);
-            NMapPathLineStyle nemo36Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo36Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo36Polygon.setLineColor(0x000000, 0xaa);
-            nemo36Polygon.setFillColor(0x99FF99, 0x55);
-            nemo36.setPathLineStyle(nemo36Polygon);
-
-            pathDataOverlay.addPathData(nemo37);
-            NMapPathLineStyle nemo37Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo37Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo37Polygon.setLineColor(0x000000, 0xaa);
-            nemo37Polygon.setFillColor(0x99FF99, 0x55);
-            nemo37.setPathLineStyle(nemo37Polygon);
-
-            pathDataOverlay.addPathData(nemo38);
-            NMapPathLineStyle nemo38Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo38Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo38Polygon.setLineColor(0x000000, 0xaa);
-            nemo38Polygon.setFillColor(0x99FF99, 0x55);
-            nemo38.setPathLineStyle(nemo38Polygon);
-
-            pathDataOverlay.addPathData(nemo39);
-            NMapPathLineStyle nemo39Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo39Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo39Polygon.setLineColor(0x000000, 0xaa);
-            nemo39Polygon.setFillColor(0x99FF99, 0x55);
-            nemo39.setPathLineStyle(nemo39Polygon);
-
-            pathDataOverlay.addPathData(nemo40);
-            NMapPathLineStyle nemo40Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo40Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo40Polygon.setLineColor(0x000000, 0xaa);
-            nemo40Polygon.setFillColor(0x99FF99, 0x55);
-            nemo40.setPathLineStyle(nemo40Polygon);
-
-            pathDataOverlay.addPathData(nemo41);
-            NMapPathLineStyle nemo41Polygon = new NMapPathLineStyle(mMapView.getContext());
-            nemo41Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            nemo41Polygon.setLineColor(0x000000, 0xaa);
-            nemo41Polygon.setFillColor(0x99FF99, 0x55);
-            nemo41.setPathLineStyle(nemo41Polygon);
+            for(int i=0;i<60;i++){
+                pathDataOverlay.addPathData(border[i]);
+                borderPolygon[i]=new NMapPathLineStyle(mMapView.getContext());
+                borderPolygon[i].setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
+                borderPolygon[i].setLineColor(0x000000, 0xaa);
+                borderPolygon[i].setFillColor(crimecolor[i], 0x55);
+                border[i].setPathLineStyle(borderPolygon[i]);
+            }
 
 
-
-            pathDataOverlay.addPathData(wolgye1);
-            //월계1동 폴리곤 생성
-            final NMapPathLineStyle wolgye1Polygon = new NMapPathLineStyle(mMapView.getContext());
-            wolgye1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            wolgye1Polygon.setLineColor(0x000000, 0xaa);
-            wolgye1Polygon.setFillColor(0x99FF99, 0x55);
-            wolgye1.setPathLineStyle(wolgye1Polygon);
-
-            pathDataOverlay.addPathData(wolgye2);
-            //월계2동 폴리곤 생성
-            NMapPathLineStyle wolgye2Polygon = new NMapPathLineStyle(mMapView.getContext());
-            wolgye2Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            wolgye2Polygon.setLineColor(0x000000, 0xaa);
-            wolgye2Polygon.setFillColor(0xCC0000, 0x55);
-            wolgye2.setPathLineStyle(wolgye2Polygon);
-
-            pathDataOverlay.addPathData(wolgye3);
-            //월계3동 폴리곤 생성
-            NMapPathLineStyle wolgye3Polygon=new NMapPathLineStyle(mMapView.getContext());
-            wolgye3Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            wolgye3Polygon.setLineColor(0x000000, 0xaa);
-            wolgye3Polygon.setFillColor(0x0066CC, 0x55);
-            wolgye3.setPathLineStyle(wolgye3Polygon);
-
-            TimerTask timertask = new TimerTask() {
+            /*TimerTask timertask = new TimerTask() {
                 @Override
                 public void run() {
                     wolgye1Polygon.setFillColor(color[i], 0x55);
@@ -1554,139 +1317,7 @@ public class NMapViewer extends NMapActivity {
                 }
             };
 
-            timer.schedule(timertask,2000,2000);
-
-            pathDataOverlay.addPathData(gongreung1);
-            //공릉1동 폴리곤 생성
-            NMapPathLineStyle gongreung1Polygon=new NMapPathLineStyle(mMapView.getContext());
-            gongreung1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            gongreung1Polygon.setLineColor(0x000000, 0xaa);
-            gongreung1Polygon.setFillColor(0x993300,0x55);
-            gongreung1.setPathLineStyle(gongreung1Polygon);
-
-            pathDataOverlay.addPathData(gongreung2);
-            //공릉2동 폴리곤 생성
-            NMapPathLineStyle gongreung2Polygon=new NMapPathLineStyle(mMapView.getContext());
-            gongreung2Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            gongreung2Polygon.setLineColor(0x000000, 0xaa);
-            gongreung2Polygon.setFillColor(0xFFFF00,0x55);
-            gongreung2.setPathLineStyle(gongreung2Polygon);
-
-            pathDataOverlay.addPathData(hagye1);
-            //하계1동 폴리곤 생성
-            NMapPathLineStyle hagye1Polygon=new NMapPathLineStyle(mMapView.getContext());
-            hagye1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            hagye1Polygon.setLineColor(0x000000, 0xaa);
-            hagye1Polygon.setFillColor(0xCCCCFF,0x55);
-            hagye1.setPathLineStyle(hagye1Polygon);
-
-            pathDataOverlay.addPathData(hagye2);
-            //하계2동 폴리곤 생성
-            NMapPathLineStyle hagye2Polygon=new NMapPathLineStyle(mMapView.getContext());
-            hagye2Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            hagye2Polygon.setLineColor(0x000000, 0xaa);
-            hagye2Polygon.setFillColor(0xFF00FF,0x55);
-            hagye2.setPathLineStyle(hagye2Polygon);
-
-            pathDataOverlay.addPathData(joongyebon);
-            //중계본동 폴리곤 생성
-            NMapPathLineStyle joongyebonPolygon=new NMapPathLineStyle(mMapView.getContext());
-            joongyebonPolygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            joongyebonPolygon.setLineColor(0x000000, 0xaa);
-            joongyebonPolygon.setFillColor(0x006699,0x55);
-            joongyebon.setPathLineStyle(joongyebonPolygon);
-
-            pathDataOverlay.addPathData(joongye1);
-            //중계1동 폴리곤 생성
-            NMapPathLineStyle joongye1Polygon=new NMapPathLineStyle(mMapView.getContext());
-            joongye1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            joongye1Polygon.setLineColor(0x000000, 0xaa);
-            joongye1Polygon.setFillColor(0x9999CC,0x55);
-            joongye1.setPathLineStyle(joongye1Polygon);
-
-            pathDataOverlay.addPathData(joongye23);
-            //중계2,3동 폴리곤 생성
-            NMapPathLineStyle joongye23Polygon=new NMapPathLineStyle(mMapView.getContext());
-            joongye23Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            joongye23Polygon.setLineColor(0x000000, 0xaa);
-            joongye23Polygon.setFillColor(0xFFCCCC,0x55);
-            joongye23.setPathLineStyle(joongye23Polygon);
-
-            pathDataOverlay.addPathData(joongye4);
-            //중계4동 폴리곤 생성
-            NMapPathLineStyle joongye4Polygon=new NMapPathLineStyle(mMapView.getContext());
-            joongye4Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            joongye4Polygon.setLineColor(0x000000, 0xaa);
-            joongye4Polygon.setFillColor(0x3333CC,0x55);
-            joongye4.setPathLineStyle(joongye4Polygon);
-
-            pathDataOverlay.addPathData(sangye1);
-            //상계1동 폴리곤 생성
-            NMapPathLineStyle sangye1Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye1Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye1Polygon.setLineColor(0x000000, 0xaa);
-            sangye1Polygon.setFillColor(0xFFCC33,0x55);
-            sangye1.setPathLineStyle(sangye1Polygon);
-
-            pathDataOverlay.addPathData(sangye2);
-            //상계2동 폴리곤 생성
-            NMapPathLineStyle sangye2Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye2Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye2Polygon.setLineColor(0x000000, 0xaa);
-            sangye2Polygon.setFillColor(0xFFCC33,0x55);
-            sangye2.setPathLineStyle(sangye2Polygon);
-
-            pathDataOverlay.addPathData(sangye34);
-            //상계3,4동 폴리곤 생성
-            NMapPathLineStyle sangye34Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye34Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye34Polygon.setLineColor(0x000000, 0xaa);
-            sangye34Polygon.setFillColor(0xFF3366,0x55);
-            sangye34.setPathLineStyle(sangye34Polygon);
-
-            pathDataOverlay.addPathData(sangye5);
-            //상계5동 폴리곤 생성
-            NMapPathLineStyle sangye5Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye5Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye5Polygon.setLineColor(0x000000, 0xaa);
-            sangye5Polygon.setFillColor(0x00FFCC,0x55);
-            sangye5.setPathLineStyle(sangye5Polygon);
-
-            pathDataOverlay.addPathData(sangye67);
-            //상계6,7동 폴리곤 생성
-            NMapPathLineStyle sangye67Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye67Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye67Polygon.setLineColor(0x000000, 0xaa);
-            sangye67Polygon.setFillColor(0x339966,0x55);
-            sangye67.setPathLineStyle(sangye67Polygon);
-
-            pathDataOverlay.addPathData(sangye8);
-            //상계8동 폴리곤 생성
-            NMapPathLineStyle sangye8Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye8Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye8Polygon.setLineColor(0x000000, 0xaa);
-            sangye8Polygon.setFillColor(0x0000FF,0x55);
-            sangye8.setPathLineStyle(sangye8Polygon);
-
-            pathDataOverlay.addPathData(sangye9);
-            //상계9동 폴리곤 생성
-            NMapPathLineStyle sangye9Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye9Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye9Polygon.setLineColor(0x000000, 0xaa);
-            sangye9Polygon.setFillColor(0xCCFF00,0x55);
-            sangye9.setPathLineStyle(sangye9Polygon);
-
-            pathDataOverlay.addPathData(sangye10);
-            //상계10동 폴리곤 생성
-            NMapPathLineStyle sangye10Polygon=new NMapPathLineStyle(mMapView.getContext());
-            sangye10Polygon.setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-            sangye10Polygon.setLineColor(0x000000, 0xaa);
-            sangye10Polygon.setFillColor(0xFF6633,0x55);
-            sangye10.setPathLineStyle(sangye10Polygon);
-
-
-
-
+            timer.schedule(timertask,2000,2000);*/
 
             // add circle data
             /*NMapCircleData circleData = new NMapCircleData(1);
