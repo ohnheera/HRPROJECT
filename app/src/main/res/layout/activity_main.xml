@@ -160,6 +160,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/MapLayout"
             android:layout_height="match_parent"
@@ -170,11 +171,12 @@
                 android:id="@+id/mapbutton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="348dp"
-                android:layout_marginTop="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/MapDisplayLayout"
                 android:background="@drawable/maps_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </RelativeLayout>
 
         <RelativeLayout

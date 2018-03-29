@@ -19,6 +19,7 @@ package com.example.hyoryeong.snapshotapi3;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +36,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
@@ -507,11 +510,16 @@ public class NMapViewer extends NMapActivity {
     double[] total=new double[60]; // 종합
     int[] crimecolor=new int[60]; //범죄 위험도 색
 
+    //지도의 레이아웃
+    LinearLayout MapDisplay;
+
 
     /** Called when the activity is first created. */
+    @SuppressLint("WrongViewCast")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.mapview);
 
         //crime 정보 받아오기
         inputstream=getResources().openRawResource(R.raw.crimeinfo);
@@ -546,11 +554,15 @@ public class NMapViewer extends NMapActivity {
             mMapView = new NMapView(this);
 
             // create parent view to rotate map view
-            mMapContainerView = new MapContainerView(this);
-            mMapContainerView.addView(mMapView);
+            //mMapContainerView = new MapContainerView(this);
+            //mMapContainerView= (MapContainerView) findViewById(R.id.MapDisplayLayout);
+            MapDisplay= (LinearLayout) findViewById(R.id.MapDisplayLayout);
+            //mMapContainerView.addView(mMapView);
+            MapDisplay.addView(mMapView);
 
             // set the activity content to the parent view
-            setContentView(mMapContainerView);
+            //setContentView(mMapContainerView);
+            //setContentView(MapDisplay);
         }
 
         // set a registered Client Id for Open MapViewer Library
