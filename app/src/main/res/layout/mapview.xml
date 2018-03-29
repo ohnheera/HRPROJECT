@@ -10,10 +10,10 @@
     <LinearLayout
         android:id="@+id/MapDisplayLayout"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="400dp"
         android:orientation="vertical"></LinearLayout>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/SettingMapLayout"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -22,17 +22,21 @@
         android:orientation="horizontal">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/checkboxlayout"
             android:layout_width="match_parent"
             android:layout_height="73dp"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="40dp"
             android:gravity="fill"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/ageviewlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <CheckBox
-                android:id="@+id/woman"
+                android:id="@+id/woman2"
                 android:layout_width="157dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -47,7 +51,7 @@
                 app:layout_constraintVertical_bias="0.48" />
 
             <CheckBox
-                android:id="@+id/man"
+                android:id="@+id/man2"
                 android:layout_width="153dp"
                 android:layout_height="34dp"
                 android:layout_marginBottom="8dp"
@@ -58,26 +62,26 @@
                 android:text="남성"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/woman"
+                app:layout_constraintStart_toEndOf="@+id/woman2"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.478" />
 
         </android.support.constraint.ConstraintLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/ageviewlayout"
             android:layout_width="match_parent"
             android:layout_height="43dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/store"
+            app:layout_constraintBottom_toTopOf="@+id/store2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.569">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/savedage"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
@@ -85,13 +89,13 @@
                 android:layout_weight="1"
                 android:text="저장 된 나이:"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@+id/spinner"
+                app:layout_constraintBottom_toTopOf="@+id/spinner2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/checkboxlayout" />
 
             <TextView
-                android:id="@+id/ageview"
+                android:id="@+id/ageview2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -99,28 +103,27 @@
         </LinearLayout>
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/spinner2"
             android:layout_width="match_parent"
             android:layout_height="39dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/store"
+            app:layout_constraintBottom_toTopOf="@+id/store2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/ageviewlayout"
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
-            android:id="@+id/store"
+            android:id="@+id/store2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayout"
-            android:layout_marginBottom="10dp"
             android:text="저장하기"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
-    </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
 </RelativeLayout>

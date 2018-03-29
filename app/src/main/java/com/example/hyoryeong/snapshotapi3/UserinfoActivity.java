@@ -47,6 +47,7 @@ public class UserinfoActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
+        //setContentView(R.layout.mapview);
 
         //variables
         store = (Button) findViewById(R.id.store);
