@@ -542,6 +542,8 @@ public class NMapViewer extends NMapActivity {
             throw new RuntimeException("Error in reading CSV file: "+ex);
         }
 
+        //사용자 정보 입력
+        setUserInfo();
         //범죄 지도 구성
         setCrimeColor();
 
@@ -614,6 +616,12 @@ public class NMapViewer extends NMapActivity {
         timer=new Timer();
 
         testPathDataOverlay();
+    }
+
+    //사용자 정보 입력
+    private void setUserInfo(){
+        
+
     }
 
     //사용자 정보 함수에 따라 범죄 지도의 색(최종 범죄 위험도)을 정하는 함수
