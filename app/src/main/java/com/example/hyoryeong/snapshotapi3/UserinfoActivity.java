@@ -52,6 +52,7 @@ public class UserinfoActivity extends AppCompatActivity {
         //variables
         store = (Button) findViewById(R.id.store);
         age = (Spinner) findViewById(R.id.spinner);
+
         women = (CheckBox) findViewById(R.id.woman);
         men = (CheckBox) findViewById(R.id.man);
         ageview = (TextView) findViewById(R.id.ageview);

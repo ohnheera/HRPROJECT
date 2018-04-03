@@ -20,6 +20,9 @@ package com.example.hyoryeong.snapshotapi3;
  * limitations under the License.
  */
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +39,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
@@ -62,10 +75,14 @@ import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Time;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -542,8 +559,131 @@ public class NMapViewer extends NMapActivity {
             throw new RuntimeException("Error in reading CSV file: "+ex);
         }
 
-        //사용자 정보 입력
-        setUserInfo();
+        //사용자 정보 입력-------------------------------------------------------------------------------------------
+        //setuserinfo();
+
+        //variables
+        final int[] tiredness = {0};
+        final Spinner age = (Spinner) findViewById(R.id.spinner_age);       //나이
+        SeekBar tired = (SeekBar) findViewById(R.id.seekBar_tired);         //피로도
+        final RadioButton W = (RadioButton) findViewById(R.id.radio_wom);   //여자
+        final RadioButton M = (RadioButton) findViewById(R.id.radio_man);   //남자
+        Button refresh = (Button) findViewById(R.id.button_refresh);        //refresh button
+        final TimePicker time = (TimePicker) findViewById(R.id.timePicker); //시간
+        Button store = (Button) findViewById(R.id.store);                   //모두 저장
+
+        String[] items = {"6세 이하","7 ~ 12세","13 ~ 15세","16 ~ 20세","21 ~ 30세", "31 ~ 40세","41 ~ 50세","51 ~ 60세", "61세 이상"};
+
+        pref= getSharedPreferences("auth", MODE_PRIVATE); //pref 이용
+                                                                            //기존의 정보를 visualize
+        if(pref.getInt("X",0) == 1) W.setChecked(true);                         //성별 visualize
+        else if(pref.getInt("Y",0) == 1) M.setChecked(true);
+
+        //spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        age.setAdapter(adapter);
+
+        String myString = "";
+        if(pref.getInt("a",0) == 1) myString = "6세 이하";     //나이 visualize
+        else if(pref.getInt("b",0) == 1) myString ="7 ~ 12세";
+        else if(pref.getInt("c",0) == 1) myString ="13 ~ 15세";
+        else if(pref.getInt("d",0) == 1) myString ="16 ~ 20세";
+        else if(pref.getInt("e",0) == 1) myString ="21 ~ 30세";
+        else if(pref.getInt("f",0) == 1) myString ="31 ~ 40세";
+        else if(pref.getInt("g",0) == 1) myString ="41 ~ 50세";
+        else if(pref.getInt("h",0) == 1) myString ="51 ~ 60세";
+        else if(pref.getInt("i",0) == 1) myString ="61세 이상";
+
+        int spinnerPosition = adapter.getPosition(myString);
+        //set the default according to value
+        age.setSelection(spinnerPosition);
+
+        tired.setProgress(pref.getInt("P",0)*20);                          //피로도 visualize
+        time.setHour(pref.getInt("hour",0));                            //시간
+        time.setMinute(pref.getInt("min",0));
+
+        //db에 저장
+        final SharedPreferences.Editor editor = pref.edit();
+        //editor에 기존에 저장된 기록 삭제
+        editor.clear();
+        //seekbar
+        tired.setMax(100);
+        tired.incrementProgressBy(1);
+        tired.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){     //피로도 저장 seekbar의 listener
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                tiredness[0] = i;
+            }
+            @Override
+            //thunb을 잡았을때의 메시지
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            //thumb을 놓았을때의 메시지
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        //새로운 정보 저장
+        store.setOnClickListener(new View.OnClickListener() {               //저장 버튼 listener
+            @Override
+            public void onClick(View v) {
+                //store
+                if(W.isChecked()){
+                    editor.putInt("X",1);                    //성별 설정: 여자
+                }
+                else if(M.isChecked()){
+                    editor.putInt("Y",1);                   //성별 설정: 남자
+                }
+                                                                     //나이 설정
+                if (age.getSelectedItem().toString().equals("6세 이하")) editor.putInt("a",1);
+                else if (age.getSelectedItem().toString().equals("7 ~ 12세")) editor.putInt("b",1);
+                else if (age.getSelectedItem().toString().equals("13 ~ 15세")) editor.putInt("c",1);
+                else if (age.getSelectedItem().toString().equals("16 ~ 20세")) editor.putInt("d",1);
+                else if (age.getSelectedItem().toString().equals("21 ~ 30세")) editor.putInt("e",1);
+                else if (age.getSelectedItem().toString().equals("31 ~ 40세")) editor.putInt("f",1);
+                else if (age.getSelectedItem().toString().equals("41 ~ 50세")) editor.putInt("g",1);
+                else if (age.getSelectedItem().toString().equals("51 ~ 60세")) editor.putInt("h",1);
+                else if (age.getSelectedItem().toString().equals("61세 이상")) editor.putInt("i",1);
+
+                int t = time.getHour();                         //시간 설정
+                if(t >= 4 && t < 7)  editor.putInt("j",1);
+                else if(t >= 7 && t < 9) editor.putInt("k",1);
+                else if(t >= 9 && t < 12) editor.putInt("l",1);
+                else if(t >= 12 && t < 18) editor.putInt("m",1);
+                else if(t >= 18 && t < 20) editor.putInt("n",1);
+                else editor.putInt("o",1);
+
+                editor.putInt("hour",time.getHour());
+                editor.putInt("min",time.getMinute());
+
+                if(tiredness[0] < 20) {                         //피로도 설정
+                    editor.putInt("P",1);
+                }
+                else if(tiredness[0] < 40) editor.putInt("P",2);
+                else if(tiredness[0] < 60) editor.putInt("P",3);
+                else if(tiredness[0] < 80) editor.putInt("P",4);
+                else editor.putInt("P",5);
+
+                editor.commit();                                //완료한다.
+
+                Toast.makeText(NMapViewer.this, "정보 저장 완료 ",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        refresh.setOnClickListener(new View.OnClickListener() {                 //refresh 버튼 리스너
+            @Override
+            public void onClick(View view) {
+                //refresh this intent
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+
+        //-------------------------------------------------------------------------------------------------------------------
         //범죄 지도 구성
         setCrimeColor();
 
@@ -618,11 +758,6 @@ public class NMapViewer extends NMapActivity {
         testPathDataOverlay();
     }
 
-    //사용자 정보 입력
-    private void setUserInfo(){
-        
-
-    }
 
     //사용자 정보 함수에 따라 범죄 지도의 색(최종 범죄 위험도)을 정하는 함수
     private void setCrimeColor(){

@@ -1,129 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/MapLayout"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="#f0ffff"
+    android:theme="@android:style/Theme.DeviceDefault.Light"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@+id/MapDisplayLayout"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:orientation="vertical"></LinearLayout>
+        android:layout_height="500dp"
+        android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/SettingMapLayout"
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner_age"
+        android:layout_width="500dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/textView7"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="53dp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/MapDisplayLayout"
-        android:background="#f0ffff"
-        android:orientation="horizontal">
+        android:layout_above="@+id/textView8"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/seekBar_tired"
+        android:text="나이"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/checkboxlayout"
-            android:layout_width="match_parent"
-            android:layout_height="73dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="16dp"
-            android:gravity="fill"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/ageviewlayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar_tired"
+        android:layout_alignStart="@+id/textView7"
+        android:text="피로도"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-            <CheckBox
-                android:id="@+id/woman2"
-                android:layout_width="157dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="180dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="1"
-                android:checked="false"
-                android:text="여성"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.48" />
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignBaseline="@id/textView8"
+        android:layout_toRightOf="@id/textView8"
+        android:layout_marginLeft="30dp"
+        tools:ignore="NotSibling">
 
-            <CheckBox
-                android:id="@+id/man2"
-                android:layout_width="153dp"
-                android:layout_height="34dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="96dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="1"
-                android:text="남성"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/woman2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.478" />
-
-        </android.support.constraint.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/ageviewlayout"
-            android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/store2"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.569">
-
-            <TextView
-                android:id="@+id/savedage"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="1"
-                android:text="저장 된 나이:"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@+id/spinner2"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkboxlayout" />
-
-            <TextView
-                android:id="@+id/ageview2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textAlignment="center" />
-        </LinearLayout>
-
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="match_parent"
-            android:layout_height="39dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/store2"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ageviewlayout"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/store2"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/radio_man"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="저장하기"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            android:text="남성"
+            android:textSize="24sp" />
 
-    </android.support.constraint.ConstraintLayout>
+        <RadioButton
+            android:id="@+id/radio_wom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="여성"
+            android:textSize="24sp" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button_refresh"
+        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/seekBar_tired"
+        android:layout_marginBottom="29dp"
+        android:text="Refresh"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+    <SeekBar
+        android:id="@+id/seekBar_tired"
+        android:layout_width="400dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/timePicker"
+        android:layout_alignStart="@+id/spinner_age"
+        android:layout_marginBottom="38dp"
+        android:layout_marginStart="28dp"
+        android:layout_weight="1" />
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="269dp"
+        android:layout_height="123dp"
+        android:layout_above="@+id/button_refresh"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_toEndOf="@+id/textView7"
+        android:timePickerMode="spinner" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_alignTop="@+id/timePicker"
+        android:layout_marginTop="28dp"
+        android:text="시간"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView6"
+        android:layout_alignStart="@+id/textView7"
+        android:layout_marginBottom="49dp"
+        android:text="성별"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/store"
+        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button_refresh"
+        android:layout_alignBottom="@+id/button_refresh"
+        android:layout_alignEnd="@+id/timePicker"
+        android:layout_marginEnd="25dp"
+        android:text="Store"
+        android:textSize="24sp" />
+
 </RelativeLayout>
