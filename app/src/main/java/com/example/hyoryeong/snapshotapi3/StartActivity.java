@@ -84,7 +84,8 @@ public class StartActivity extends AppCompatActivity {
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(),"사용자 정보가 존재합니다.", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(StartActivity.this, MainActivity.class));
+                    //startActivity(new Intent(StartActivity.this, MainActivity.class));
+                    startActivity(new Intent(StartActivity.this, NMapViewer.class));
                     finish();
                 }
             } else {

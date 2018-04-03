@@ -27,7 +27,8 @@ public class LoadingActivity extends Activity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    //Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    Intent intent = new Intent(getBaseContext(), NMapViewer.class);
                     startActivity(intent);
                     finish();
                 } else {
