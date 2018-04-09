@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button deletebutton;//탈퇴버튼
     Button Logoutbutton;//로그아웃버튼
     Button Editbutton;//정보수정버튼
-    TextView sensordata;
-    Button btnPrev, btnNext;
     ViewFlipper vFlipper;
     RelativeLayout mapView;
     List<ImageView> indexes;
@@ -134,48 +132,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnPrev=(Button) findViewById(R.id.btnPrev);
-        btnNext=(Button)findViewById(R.id.btnNext);
         vFlipper=(ViewFlipper)findViewById(R.id.viewFlipper1);
         mapView=(RelativeLayout)findViewById(R.id.MapLayout);
         ImageView index0=(ImageView)findViewById(R.id.imgIndex0);
         ImageView index1=(ImageView)findViewById(R.id.imgIndex1);
-        ImageView index2=(ImageView)findViewById(R.id.imgIndex2);
-        ImageView index3=(ImageView)findViewById(R.id.imgIndex3);
-        ImageView index4=(ImageView)findViewById(R.id.imgIndex4);
 
         //인덱스 리스트
         indexes=new ArrayList<>();
         indexes.add(index0);
         indexes.add(index1);
-        indexes.add(index2);
-        indexes.add(index3);
-        indexes.add(index4);
 
         //좌우 슬라이드 시 화면 넘어가기
         vFlipper.setOnTouchListener(new ViewFlipperAction(this,vFlipper));
-
-        btnPrev.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                vFlipper.showPrevious();
-                if(vFlipper.getCurrentView()==mapView){
-                    startActivity(new Intent(MainActivity.this, NMapViewer.class));
-                }
-            }
-        });
-
-        btnNext.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                vFlipper.showNext();
-                if(vFlipper.getCurrentView()==mapView){
-                    startActivity(new Intent(MainActivity.this, NMapViewer.class));
-                }
-            }
-        });
 
         activi = (TextView) findViewById(R.id.activity);
         locat = (TextView) findViewById(R.id.location);
@@ -189,16 +157,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Logoutbutton = (Button) findViewById(R.id.logoutbutton);
         //정보수정 버튼
         Editbutton= (Button)findViewById(R.id.editbutton);
-        //센서 데이터 텍스트뷰
-        sensordata=(TextView) findViewById(R.id.sensordata);
-
 
         //정보수정버튼 리스너
         Editbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, UserinfoActivity.class));
-                finish();
+                //finish();
             }
         });
 
@@ -392,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Grav.setValue(gravity);
         }
 
-        sensordata.setText(accelometer+","+Light+","+gravity+","+gyroscope+","+magnetic);
+        //sensordata.setText(accelometer+","+Light+","+gravity+","+gyroscope+","+magnetic);
 
     }
 
@@ -469,20 +434,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     @Override
                     public void onResult(@NonNull HeadphoneStateResult headphoneStateResult) {
                         if (!headphoneStateResult.getStatus().isSuccess()) {
+                            editor.putInt("HDP",0);
                             Log.e(TAG, "Could not get headphone state.");
                             return;
                         }
                         HeadphoneState headphoneState = headphoneStateResult.getHeadphoneState();
                         if (headphoneState.getState() == HeadphoneState.PLUGGED_IN) {
+                            editor.putInt("HDP",5);
                             Log.i(TAG, "Headphones are plugged in.\n");
                             headphone.setText("Headphones are plugged in");
                             myRef2.setValue("Plugged in");
                         } else {
+                            editor.putInt("HDP",0);
                             Log.i(TAG, "Headphones are NOT plugged in.\n");
                             headphone.setText("Headphones are NOT plugged in");
                             myRef2.setValue("Not Plugged in");
                         }
-
+                        editor.commit();
                     }
                 });
 

@@ -765,35 +765,43 @@ public class NMapViewer extends NMapActivity {
         pref= getSharedPreferences("auth", MODE_PRIVATE);
 
         //사용자 정보 변수
-        int dX=pref.getInt("X",0);
-        int dY=pref.getInt("Y",0);
-        int da=pref.getInt("a",0);
-        int db=pref.getInt("b",0);
-        int dc=pref.getInt("c",0);
-        int dd=pref.getInt("d",0);
-        int de=pref.getInt("e",0);
-        int df=pref.getInt("f",0);
-        int dg=pref.getInt("g",0);
-        int dh=pref.getInt("h",0);
-        int di=pref.getInt("i",0);
+        int dX=pref.getInt("X",0);      //성별 여
+        int dY=pref.getInt("Y",0);      //성별 남
+        int da=pref.getInt("a",0);      //나이 - ~6
+        int db=pref.getInt("b",0);      //나이 - 7~12
+        int dc=pref.getInt("c",0);      //나이 - 13~15
+        int dd=pref.getInt("d",0);      //나이 - 16~20
+        int de=pref.getInt("e",0);      //나이 - 21~30
+        int df=pref.getInt("f",0);      //나이 - 31~40
+        int dg=pref.getInt("g",0);      //나이 - 41~50
+        int dh=pref.getInt("h",0);      //나이 - 51~60
+        int di=pref.getInt("i",0);      //나이 - 61~
+        int dj=pref.getInt("j",0);      //시간 - 새벽
+        int dk=pref.getInt("k",0);      //시간 - 아침
+        int dl=pref.getInt("l",0);      //시간 - 오전
+        int dm=pref.getInt("m",0);      //시간 - 오후
+        int dn=pref.getInt("n",0);      //시간 - 저녁
+        int do_=pref.getInt("o",0);     //시간 - 밤
+        int dP=pref.getInt("P",0);      //피로도
+        int dHDP=pref.getInt("HDP",0);  //헤드폰 사용
 
         double result;
 
         for(int i=0;i<60;i++){
             // 살인
-            dA[i]= Integer.parseInt(data[i+1][1]) * (dX * (0.421 + (da * 0.042 + db * 0.013 + dc * 0.003 + dd * 0.021 + de * 0.087 + df * 0.132 + dg * 0.28 + dh * 0.219 + di * 0.203))
+            dA[i]= (Integer.parseInt(data[i+1][1]) + dj * 0.74 + dk * 0.61 + dl * 1.16 + dm * 2.65 + dn * 0.83 + do_ * 4.01) * (dX * (0.421 + (da * 0.042 + db * 0.013 + dc * 0.003 + dd * 0.021 + de * 0.087 + df * 0.132 + dg * 0.28 + dh * 0.219 + di * 0.203))
                     + dY * (0.579 + (da * 0.027 + db * 0.012 + dc * 0.004 + dd * 0.027 + de * 0.111 + df * 0.188 + dg * 0.242 + dh * 0.232 + di * 0.157)));
             // 강도
-            dB[i]=Integer.parseInt(data[i+1][2]) * (dX * (0.095 + ((da+db+dc+dd) * 0.325 + de * 0.19 + df * 0.135 + dg * 0.184 + dh * 0.11 + di * 0.055 ))
+            dB[i]=(Integer.parseInt(data[i+1][2]) + dj * 1.59 + dk * 0.48 + dl * 0.79 + dm * 1.98 + dn * 0.9 + do_ * 4.26) * (dX * (0.095 + ((da+db+dc+dd) * 0.325 + de * 0.19 + df * 0.135 + dg * 0.184 + dh * 0.11 + di * 0.055 ))
                     + dY * (0.905 + ((da+db+dc+dd) * 0.17 + de * 0.301 + df * 0.235 + dg * 0.164 + dh * 0.098 + di * 0.032)));
             // 강간
-            dC[i]=Integer.parseInt(data[i+1][3]) * (dX * (0.9464 + (da * 0.00567 + db * 0.035687 + dc * 0.06206923 + dd * 0.202366365 + de * 0.36927554 + df * 0.12854189 + dg * 0.092740083 + dh * 0.062184102 + di * 0.021442794))
+            dC[i]=(Integer.parseInt(data[i+1][3]) + dj * 0.95 + dk * 0.68 + dl * 0.84 + dm * 2.17 + dn * 1.04 + do_ * 4.31) * (dX * (0.9464 + (da * 0.00567 + db * 0.035687 + dc * 0.06206923 + dd * 0.202366365 + de * 0.36927554 + df * 0.12854189 + dg * 0.092740083 + dh * 0.062184102 + di * 0.021442794))
                     + dY * (0.0536 + (da * 0.01488498 + db * 0.085926928 + dc * 0.094046008 + dd * 0.185385656 + de * 0.305142084 + df * 0.106224628 + dg * 0.107577808 + dh * 0.065629229 + di *0.025033829)));
             // 폭력
-            dD[i]=Integer.parseInt(data[i+1][4]) * (dX * (0.378 + ((da+db+dc) * 0.018 + dd * 0.069 + de * 0.178 + df * 0.201 + dg * 0.238 + dh * 0.197 + di * 0.098)
+            dD[i]=(Integer.parseInt(data[i+1][4])+ dj * 0.92 + dk * 0.43 + dl * 0.78 + dm * 1.76 + dn * 0.87 + do_ * 5.23) * (dX * (0.378 + ((da+db+dc) * 0.018 + dd * 0.069 + de * 0.178 + df * 0.201 + dg * 0.238 + dh * 0.197 + di * 0.098)
                     + dY * (0.622 + ((da+db+dc) * 0.026 + dd * 0.109 + de * 0.192 + df * 0.159 + dg * 0.193 + dh * 0.213 + di * 0.108))));
             // 약취유인
-            dE[i]= Integer.parseInt(data[i+1][5]) * (dX * (0.665 + (da * 0.093596059 + db * 0.22962963 + dc * 0.125925926 + dd * 0.207407407 + de * 0.185185185 + df * 0.074074074 + dg * 0.014814815 + dh * 0.022222)
+            dE[i]= (Integer.parseInt(data[i+1][5]) +dk * 0.67 + dl * 1.73 + dm * 5.73 + dn * 1.2 + do_ * 0.67) * (dX * (0.665 + (da * 0.093596059 + db * 0.22962963 + dc * 0.125925926 + dd * 0.207407407 + de * 0.185185185 + df * 0.074074074 + dg * 0.014814815 + dh * 0.022222)
                     + dY * (0.02906 + (da * 0.305084746 + db * 0.237288136 + dc * 0.101694915 + dd * 0.050847458 + de * 0 + df * 0.084745763 + dg * 0.084745763 + dh * 0.050847458 + di * 0.084745763))));
             // 여성안전
             dF[i]=Integer.parseInt(data[i+1][6]);
@@ -802,39 +810,24 @@ public class NMapViewer extends NMapActivity {
             // 노인안전
             dH[i]=Integer.parseInt(data[i+1][8]);
             // 종합
-            total[i]=(dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
-            Log.e("color",String.valueOf(total[i]));
+            total[i]= dHDP +dP + (dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
+            Log.e("hdp",String.valueOf(dHDP));
             result=Math.round(total[i]);
             //색깔 저장
-            if(result>0&&result<=10){
+            if(result>0&&result<=5){                       //안전 (1)
                 crimecolor[i]=0x98FB98;
             }
-            else if(result>10&&result<=20){
-                crimecolor[i]=0x20B2AA;
-            }
-            else if(result>20&&result<=30){
+            else if(result>5&&result<=15){                //보통 (2)
                 crimecolor[i]=0x4169E1;
             }
-            else if(result>30&&result<=40){
-                crimecolor[i]=0x0000CD;
-            }
-            else if(result>40&&result<=50){
+            else if(result>15&&result<=30){               //주의 (3)
                 crimecolor[i]=0xFFFF00;
             }
-            else if(result>50&&result<=70){
-                crimecolor[i]=0xFFA500;
-            }
-            else if(result>70&&result<=90){
-                crimecolor[i]=0xFF7F50;
-            }
-            else if(result>90&&result<=110){
+            else if(result>30&&result<=55){               //위험 (4)
                 crimecolor[i]=0xF08080;
             }
-            else if(result>110&&result<=130){
+            else {                                        //매우위험 (5)
                 crimecolor[i]=0xFF0000;
-            }
-            else{
-                crimecolor[i]=0xB22222;
             }
         }
     }
@@ -1455,7 +1448,7 @@ public class NMapViewer extends NMapActivity {
                 pathDataOverlay.addPathData(border[i]);
                 borderPolygon[i]=new NMapPathLineStyle(mMapView.getContext());
                 borderPolygon[i].setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);
-                borderPolygon[i].setLineColor(0x000000, 0xaa);
+                borderPolygon[i].setLineColor(crimecolor[i], 0xaa);
                 borderPolygon[i].setFillColor(crimecolor[i], 0x55);
                 border[i].setPathLineStyle(borderPolygon[i]);
             }
