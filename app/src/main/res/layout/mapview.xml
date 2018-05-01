@@ -118,9 +118,9 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView6"
+        android:layout_above="@+id/seekBar_tired"
         android:layout_alignStart="@+id/textView7"
-        android:layout_marginBottom="49dp"
+        android:layout_marginBottom="21dp"
         android:text="성별"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -136,5 +136,13 @@
         android:layout_marginEnd="25dp"
         android:text="Store"
         android:textSize="24sp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_above="@+id/timePicker"
+        android:layout_alignParentEnd="true"
+        app:srcCompat="@drawable/drawdanger" />
 
 </RelativeLayout>

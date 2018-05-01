@@ -600,7 +600,8 @@ public class NMapViewer extends NMapActivity {
         //set the default according to value
         age.setSelection(spinnerPosition);
 
-        tired.setProgress(pref.getInt("P",0)*20);                          //피로도 visualize
+        tiredness[0] = pref.getInt("p",0);
+        tired.setProgress(pref.getInt("p",0));                          //피로도 visualize
         time.setHour(pref.getInt("hour",0));                            //시간
         time.setMinute(pref.getInt("min",0));
 
@@ -658,6 +659,7 @@ public class NMapViewer extends NMapActivity {
 
                 editor.putInt("hour",time.getHour());
                 editor.putInt("min",time.getMinute());
+                editor.putInt("p",tiredness[0]);
 
                 if(tiredness[0] < 20) {                         //피로도 설정
                     editor.putInt("P",1);
@@ -812,10 +814,10 @@ public class NMapViewer extends NMapActivity {
             // 종합
             total[i]= dHDP +dP + (dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
             Log.e("hdp",String.valueOf(dHDP));
-            result=Math.round(total[i]);
+            result=Math.round(total[i]/2);
             //색깔 저장
             if(result>0&&result<=5){                       //안전 (1)
-                crimecolor[i]=0x98FB98;
+                crimecolor[i]=0x46f446;
             }
             else if(result>5&&result<=15){                //보통 (2)
                 crimecolor[i]=0x4169E1;
@@ -823,8 +825,8 @@ public class NMapViewer extends NMapActivity {
             else if(result>15&&result<=30){               //주의 (3)
                 crimecolor[i]=0xFFFF00;
             }
-            else if(result>30&&result<=55){               //위험 (4)
-                crimecolor[i]=0xF08080;
+            else if(result>31&&result<=60){               //위험 (4)
+                crimecolor[i]=0xff7d0c;
             }
             else {                                        //매우위험 (5)
                 crimecolor[i]=0xFF0000;
