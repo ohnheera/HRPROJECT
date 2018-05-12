@@ -568,7 +568,6 @@ public class NMapViewer extends NMapActivity {
         SeekBar tired = (SeekBar) findViewById(R.id.seekBar_tired);         //피로도
         final RadioButton W = (RadioButton) findViewById(R.id.radio_wom);   //여자
         final RadioButton M = (RadioButton) findViewById(R.id.radio_man);   //남자
-        Button refresh = (Button) findViewById(R.id.button_refresh);        //refresh button
         final TimePicker time = (TimePicker) findViewById(R.id.timePicker); //시간
         Button store = (Button) findViewById(R.id.store);                   //모두 저장
 
@@ -672,13 +671,7 @@ public class NMapViewer extends NMapActivity {
                 editor.commit();                                //완료한다.
 
                 Toast.makeText(NMapViewer.this, "정보 저장 완료 ",Toast.LENGTH_LONG).show();
-            }
-        });
 
-        refresh.setOnClickListener(new View.OnClickListener() {                 //refresh 버튼 리스너
-            @Override
-            public void onClick(View view) {
-                //refresh this intent
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
@@ -815,21 +808,27 @@ public class NMapViewer extends NMapActivity {
             total[i]= dHDP +dP + (dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
             Log.e("hdp",String.valueOf(dHDP));
             result=Math.round(total[i]/2);
+            Log.e("score",String.valueOf(result));
             //색깔 저장
-            if(result>0&&result<=5){                       //안전 (1)
+            if(result>0&&result<=9){                       //안전 (1)
                 crimecolor[i]=0x46f446;
+                Log.e("score","1");
             }
-            else if(result>5&&result<=15){                //보통 (2)
+            else if(result>9&&result<=15){                //보통 (2)
                 crimecolor[i]=0x4169E1;
+                Log.e("score","2");
             }
-            else if(result>15&&result<=30){               //주의 (3)
+            else if(result>15&&result<=20){               //주의 (3)
                 crimecolor[i]=0xFFFF00;
+                Log.e("score","3");
             }
-            else if(result>31&&result<=60){               //위험 (4)
+            else if(result>20&&result<=30){               //위험 (4)
                 crimecolor[i]=0xff7d0c;
+                Log.e("score","4");
             }
             else {                                        //매우위험 (5)
                 crimecolor[i]=0xFF0000;
+                Log.e("score","5");
             }
         }
     }
@@ -1083,14 +1082,14 @@ public class NMapViewer extends NMapActivity {
         border[15].endPathData();
 
         //노원구 월계1동 - 17
-        border[16]=new NMapPathData(98);
+        /*border[16]=new NMapPathData(98);
         border[16].initPathData();
         for(int i=1;i<98;i+=2){
             double lat= wolgye1locat[i-1];
             double lon= wolgye1locat[i];
             border[16].addPathPoint(lat,lon,NMapPathLineStyle.TYPE_DASH);
         }
-        border[16].endPathData();
+        border[16].endPathData();*/
 
         //노원구 월계3동 - 18
         border[17]=new NMapPathData(110);
@@ -1447,6 +1446,7 @@ public class NMapViewer extends NMapActivity {
             NMapPathLineStyle[] borderPolygon=new NMapPathLineStyle[60];
 
             for(int i=0;i<60;i++){
+                if(i==16) continue;
                 pathDataOverlay.addPathData(border[i]);
                 borderPolygon[i]=new NMapPathLineStyle(mMapView.getContext());
                 borderPolygon[i].setPataDataType(NMapPathLineStyle.DATA_TYPE_POLYGON);

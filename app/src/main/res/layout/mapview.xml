@@ -1,148 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
     android:id="@+id/MapLayout"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:theme="@android:style/Theme.DeviceDefault.Light"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/MapDisplayLayout"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="600dp"
         android:orientation="vertical">
 
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/spinner_age"
-        android:layout_width="500dp"
-        android:layout_height="30dp"
-        android:layout_alignBottom="@+id/textView7"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="53dp" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView8"
-        android:layout_marginBottom="30dp"
-        android:layout_marginEnd="15dp"
-        android:layout_toStartOf="@+id/seekBar_tired"
-        android:text="나이"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/seekBar_tired"
-        android:layout_alignStart="@+id/textView7"
-        android:text="피로도"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignBaseline="@id/textView8"
-        android:layout_toRightOf="@id/textView8"
-        android:layout_marginLeft="30dp"
-        tools:ignore="NotSibling">
-
-        <RadioButton
-            android:id="@+id/radio_man"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="남성"
-            android:textSize="24sp" />
-
-        <RadioButton
-            android:id="@+id/radio_wom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="여성"
-            android:textSize="24sp" />
-
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/button_refresh"
-        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/seekBar_tired"
-        android:layout_marginBottom="29dp"
-        android:text="Refresh"
-        android:textAlignment="center"
-        android:textSize="24sp" />
-
-    <SeekBar
-        android:id="@+id/seekBar_tired"
-        android:layout_width="400dp"
-        android:layout_height="50dp"
-        android:layout_above="@+id/timePicker"
-        android:layout_alignStart="@+id/spinner_age"
-        android:layout_marginBottom="38dp"
-        android:layout_marginStart="28dp"
-        android:layout_weight="1" />
-
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="269dp"
-        android:layout_height="123dp"
-        android:layout_above="@+id/button_refresh"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_toEndOf="@+id/textView7"
-        android:timePickerMode="spinner" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView6"
-        android:layout_alignTop="@+id/timePicker"
-        android:layout_marginTop="28dp"
-        android:text="시간"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/seekBar_tired"
-        android:layout_alignStart="@+id/textView7"
-        android:layout_marginBottom="21dp"
-        android:text="성별"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/store"
-        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button_refresh"
-        android:layout_alignBottom="@+id/button_refresh"
-        android:layout_alignEnd="@+id/timePicker"
-        android:layout_marginEnd="25dp"
-        android:text="Store"
-        android:textSize="24sp" />
-
-    <ImageView
-        android:id="@+id/imageView2"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_above="@+id/timePicker"
-        android:layout_alignParentEnd="true"
-        app:srcCompat="@drawable/drawdanger" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/seekBar_tired"
+                android:layout_alignStart="@+id/textView7"
+                android:layout_weight="1"
+                android:text="피로도"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="20sp" />
+
+            <SeekBar
+                android:id="@+id/seekBar_tired"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/timePicker"
+                android:layout_alignStart="@+id/spinner_age"
+                android:layout_marginBottom="38dp"
+                android:layout_marginStart="28dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/textView6"
+                android:layout_alignTop="@+id/timePicker"
+                android:layout_marginTop="28dp"
+                android:layout_weight="1"
+                android:text="시간"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="20sp" />
+
+            <TimePicker
+                android:id="@+id/timePicker"
+                android:layout_width="600dp"
+                android:layout_height="130dp"
+                android:layout_above="@+id/button_refresh"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="32dp"
+                android:layout_toEndOf="@+id/textView7"
+                android:layout_weight="1"
+                android:timePickerMode="spinner" />
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"></LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/seekBar_tired"
+                android:layout_alignStart="@+id/textView7"
+                android:layout_marginBottom="21dp"
+                android:layout_weight="1"
+                android:lineSpacingExtra="8sp"
+                android:text="성별"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"></LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/textView8"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@id/textView8"
+                android:orientation="horizontal"
+                tools:ignore="NotSibling">
+
+                <RadioButton
+                    android:id="@+id/radio_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="남성"
+                    android:textSize="20sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_wom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="여성"
+                    android:textAlignment="center"
+                    android:textSize="20sp" />
+
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView8"
+                android:layout_marginBottom="30dp"
+                android:layout_marginEnd="15dp"
+                android:layout_toStartOf="@+id/seekBar_tired"
+                android:layout_weight="1"
+                android:text="나이"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"></LinearLayout>
+
+            <Spinner
+                android:id="@+id/spinner_age"
+                android:layout_width="550dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textView7"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="53dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/store"
+            style="@style/FirebaseUI.Button.AccountChooser.TwitterButton"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignBaseline="@+id/button_refresh"
+            android:layout_alignBottom="@+id/button_refresh"
+            android:layout_alignEnd="@+id/timePicker"
+            android:layout_marginEnd="25dp"
+            android:layout_weight="1"
+            android:lineSpacingExtra="0sp"
+            android:text="Store"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+    </LinearLayout>
+
+</LinearLayout>
