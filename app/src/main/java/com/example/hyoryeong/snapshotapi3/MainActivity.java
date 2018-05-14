@@ -46,6 +46,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.PlacesResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.Weather;

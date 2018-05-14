@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.hyoryeong.snapshotapi3.MainActivity"
-    android:theme="@android:style/Theme.DeviceDefault.Light"
+    android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp"
     android:orientation="vertical">
@@ -37,69 +37,126 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/ActivityLayout"
+        <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#f0ffff">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="100dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/activity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/headphone"
                 android:layout_alignStart="@+id/location"
-                android:layout_marginBottom="43dp"
-                android:text="Activity"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/headphone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="90dp"
-                android:text="Headphones"
-                app:layout_constraintTop_toBottomOf="@+id/activity" />
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="218dp"
-                android:text="Location"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/place"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="303dp"
-                android:text="Places"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="407dp"
-                android:text="Weather"
+                android:fontFamily="sans-serif"
+                android:padding="2dp"
+                android:text="Activity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/SettingLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="46dp"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/headphone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:padding="2dp"
+                android:text="Headphones"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/activity" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:padding="2dp"
+                android:text="Location"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <TextView
+                android:id="@+id/place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:padding="2dp"
+                android:text="Places"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/weather"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:text="Weather"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="100dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="26dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +164,7 @@
 
                 <Button
                     android:id="@+id/logoutbutton"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    style="@style/FirebaseUI.Button.AccountChooser.TwitterButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -116,7 +173,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_weight="1"
                     android:text="로그아웃"
-                    android:textSize="8sp"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +182,7 @@
 
                 <Button
                     android:id="@+id/editbutton"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    style="@style/FirebaseUI.Button.AccountChooser.TwitterButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -133,7 +191,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_weight="1"
                     android:text="정보수정"
-                    android:textSize="8sp"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/deletebutton"
                     app:layout_constraintHorizontal_bias="0.55"
@@ -145,27 +204,27 @@
 
                 <Button
                     android:id="@+id/deletebutton"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    style="@style/FirebaseUI.Button.AccountChooser.TwitterButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_weight="1"
                     android:text="탈퇴하기"
-                    android:textSize="8sp"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.964" />
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/MapLayout"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="#f0ffff">
+            android:layout_height="match_parent">
 
             <ImageButton
                 android:id="@+id/mapbutton"
@@ -173,7 +232,6 @@
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/maps_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
