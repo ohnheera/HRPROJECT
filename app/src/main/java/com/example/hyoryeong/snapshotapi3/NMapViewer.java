@@ -27,12 +27,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -92,7 +97,7 @@ import java.util.TimerTask;
  *
  * @author kyjkim
  */
-public class NMapViewer extends NMapActivity {
+public class NMapViewer extends NMapActivity implements SensorEventListener {
     private static final String LOG_TAG = "NMapViewer";
     private static final boolean DEBUG = false;
 
@@ -103,6 +108,8 @@ public class NMapViewer extends NMapActivity {
 
     private NMapView mMapView;
     private NMapController mMapController;
+
+    private SensorManager mSensorManager;
 
     private static final NGeoPoint NMAP_LOCATION_DEFAULT = new NGeoPoint(127.05969579999999, 37.6194965);
     private static final int NMAP_ZOOMLEVEL_DEFAULT = 11;
@@ -510,6 +517,7 @@ public class NMapViewer extends NMapActivity {
 
     //db
     SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     //crime 정보 받아올 인자들
     InputStream inputstream;
@@ -530,6 +538,8 @@ public class NMapViewer extends NMapActivity {
     //지도의 레이아웃
     LinearLayout MapDisplay;
 
+    float lux;
+
 
     /** Called when the activity is first created. */
     @SuppressLint("WrongViewCast")
@@ -537,6 +547,9 @@ public class NMapViewer extends NMapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapview);
+
+        //빛 센서
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         //crime 정보 받아오기
         inputstream=getResources().openRawResource(R.raw.crimeinfo);
@@ -574,6 +587,7 @@ public class NMapViewer extends NMapActivity {
         String[] items = {"6세 이하","7 ~ 12세","13 ~ 15세","16 ~ 20세","21 ~ 30세", "31 ~ 40세","41 ~ 50세","51 ~ 60세", "61세 이상"};
 
         pref= getSharedPreferences("auth", MODE_PRIVATE); //pref 이용
+        editor = pref.edit();
         //기존의 정보를 visualize
         if(pref.getInt("X",0) == 1) W.setChecked(true);                         //성별 visualize
         else if(pref.getInt("Y",0) == 1) M.setChecked(true);
@@ -670,7 +684,15 @@ public class NMapViewer extends NMapActivity {
 
                 editor.commit();                                //완료한다.
 
-                Toast.makeText(NMapViewer.this, "정보 저장 완료 ",Toast.LENGTH_LONG).show();
+                Log.e("lux2", String.valueOf(lux));
+                if(lux < 30 ){
+                    Toast toast=Toast.makeText(NMapViewer.this, "정보 저장 완료, 어두운 곳입니다 ", Toast.LENGTH_LONG);
+                    //toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
+                }
+                else{
+                    Toast.makeText(NMapViewer.this, "정보 저장 완료 ",Toast.LENGTH_LONG).show();
+                }
 
                 Intent intent = getIntent();
                 finish();
@@ -779,7 +801,7 @@ public class NMapViewer extends NMapActivity {
         int do_=pref.getInt("o",0);     //시간 - 밤
         int dP=pref.getInt("P",0);      //피로도
         int dHDP=pref.getInt("HDP",0);  //헤드폰 사용
-
+        int dLUX=pref.getInt("LUX", 0); //빛 세기
         double result;
 
         for(int i=0;i<60;i++){
@@ -807,7 +829,8 @@ public class NMapViewer extends NMapActivity {
             // 종합
             total[i]= dHDP +dP + (dA[i]+dB[i]+dC[i]+dD[i]+dE[i]) * 2 * ( dX * ( dF[i] * 0.2 + 1 + (da+db+dc) * dG[i] * 0.2  + di * dH[i] * 0.2) + dY * ( (da+db+dc) * dG[i] * 0.2 + 1 + di * dH[i] * 0.2) );
             Log.e("hdp",String.valueOf(dHDP));
-            result=Math.round(total[i]/2);
+            result=Math.round(total[i]/2) + dLUX;
+            Log.e("lux", String.valueOf(dLUX));
             Log.e("score",String.valueOf(result));
             //색깔 저장
             if(result>0&&result<=9){                       //안전 (1)
@@ -841,6 +864,7 @@ public class NMapViewer extends NMapActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -849,6 +873,7 @@ public class NMapViewer extends NMapActivity {
         stopMyLocation();
 
         super.onStop();
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
@@ -2073,6 +2098,33 @@ public class NMapViewer extends NMapActivity {
 //        	}
         }
     };
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // The light sensor returns a single value.
+        // Many sensors return 3 values, one for each axis.
+        Sensor sens=event.sensor;
+
+        if(sens.getType()==Sensor.TYPE_LIGHT){
+            String light;
+            lux=event.values[0];
+            if(lux<30){
+                editor.putInt("LUX", 2);
+            }
+            else{
+                editor.putInt("LUX",0);
+            }
+            editor.commit();
+
+            light=lux+" ";
+            Log.e("Light", light);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 
     /**
      * Container view class to rotate map view.
